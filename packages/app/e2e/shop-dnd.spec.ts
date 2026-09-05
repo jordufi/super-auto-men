@@ -72,3 +72,25 @@ test('a unit that ate a food shows the item it is holding', async ({ page }) => 
     'honey',
   )
 })
+
+test('every shop slot shows what it costs, and dims what you cannot afford', async ({ page }) => {
+  await page.goto('/?seed=1')
+  await expect(page.getByTestId('gold')).toContainText('10')
+  const prices = page.locator('[data-testid^="price-"]')
+  await expect(prices).toHaveCount(4) // 3 units + 1 food on turn 1
+  for (const p of await prices.all()) {
+    await expect(p).toHaveAttribute('data-cost', '3')
+    await expect(p).toHaveAttribute('data-affordable', 'true')
+  }
+
+  // Spend down to 1 gold: every slot is now unaffordable and says so.
+  await page.getByTestId('shop-slot-0').click()
+  await page.getByTestId('team-slot-0').click()
+  await page.getByTestId('shop-slot-0').click()
+  await page.getByTestId('team-slot-1').click()
+  for (let i = 0; i < 3; i++) await page.getByTestId('roll').click()
+  await expect(page.getByTestId('gold')).toContainText('1')
+  for (const p of await page.locator('[data-testid^="price-"]').all()) {
+    await expect(p).toHaveAttribute('data-affordable', 'false')
+  }
+})

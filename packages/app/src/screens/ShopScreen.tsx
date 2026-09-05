@@ -98,6 +98,7 @@ export function ShopScreen(): ReactNode {
         </div>
         <ShopRow
           shop={state.shop}
+          gold={state.gold}
           selected={selected?.kind === 'shop' ? selected.index : null}
           dragging={drag?.kind === 'shop' ? drag.from : null}
           onSlotPointerDown={shopPointerDown}

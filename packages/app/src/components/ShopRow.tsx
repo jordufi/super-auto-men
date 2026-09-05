@@ -1,5 +1,6 @@
 import type { PointerEvent, ReactNode } from 'react'
 import type { ShopSlot } from '@sam/sim'
+import { FOOD_COST, UNIT_COST } from '@sam/sim'
 import { CONTENT } from '@sam/content'
 import { UnitCard } from './UnitCard'
 
@@ -7,20 +8,27 @@ export interface ShopRowProps {
   shop: readonly ShopSlot[]
   selected: number | null
   dragging: number | null
+  /** Drives the "can I afford this" styling on the price coins. */
+  gold: number
   onSlotPointerDown: (index: number, e: PointerEvent<HTMLElement>) => void
 }
 
-export function ShopRow({ shop, selected, dragging, onSlotPointerDown }: ShopRowProps): ReactNode {
+const costOf = (item: ShopSlot): number => (item.kind === 'unit' ? UNIT_COST : FOOD_COST)
+
+export function ShopRow({ shop, selected, dragging, gold, onSlotPointerDown }: ShopRowProps): ReactNode {
   return (
     <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
       {shop.map((item, i) => {
         const def = item.kind === 'unit' ? CONTENT.getUnit(item.defId) : null
+        const cost = costOf(item)
+        const affordable = gold >= cost
         return (
           <div
             key={`${i}-${item.kind}-${item.defId}`}
             data-testid={`shop-slot-${i}`}
             onPointerDown={(e) => onSlotPointerDown(i, e)}
             style={{
+              position: 'relative',
               width: 140,
               height: 160,
               display: 'grid',
@@ -31,6 +39,32 @@ export function ShopRow({ shop, selected, dragging, onSlotPointerDown }: ShopRow
               touchAction: 'none',
             }}
           >
+            {/* A coin in the corner: the price is the one thing a shop slot must always show. */}
+            <div
+              data-testid={`price-${i}`}
+              data-cost={cost}
+              data-affordable={affordable ? 'true' : 'false'}
+              title={`${cost} gold`}
+              style={{
+                position: 'absolute',
+                top: 4,
+                left: 4,
+                zIndex: 2,
+                width: 26,
+                height: 26,
+                borderRadius: '50%',
+                display: 'grid',
+                placeContent: 'center',
+                fontSize: 15,
+                fontWeight: 800,
+                color: '#101018',
+                background: affordable ? 'var(--gold)' : 'var(--line)',
+                border: '2px solid #00000055',
+                opacity: affordable ? 1 : 0.75,
+              }}
+            >
+              {cost}
+            </div>
             <UnitCard
               kind={item.kind}
               defId={item.defId}

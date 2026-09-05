@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { ROLL_COST } from '@sam/sim'
 
 export interface ActionBarProps {
   canRoll: boolean
@@ -15,7 +16,7 @@ export function ActionBar(p: ActionBarProps): ReactNode {
   return (
     <div style={{ display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
       <button data-testid="roll" disabled={!p.canRoll} onClick={p.onRoll}>
-        Roll (1)
+        Roll ({ROLL_COST})
       </button>
       {/* Doubles as the sell drop zone (PLAN.md Phase 9 step 2). */}
       <button

@@ -42,7 +42,7 @@ export default tseslint.config(
         {
           patterns: [
             {
-              group: ['@sam/*', '@*/*', '[a-z]*'],
+              regex: '^[^.]',
               message: 'sim must not import any package (ARCHITECTURE.md §3). Use relative imports only.',
             },
           ],

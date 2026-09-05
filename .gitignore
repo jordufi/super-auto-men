@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+*.tsbuildinfo
+
+# environment / secrets
+.env
+.env.local
+.env.*.local
+
+# test output
+test-results/
+playwright-report/
+coverage/
+
+# logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Capacitor / Android (Phase 14) — the generated android/ folder is committed, build outputs are not
+packages/app/android/app/build/
+packages/app/android/build/
+packages/app/android/.gradle/
+packages/app/android/local.properties
+packages/app/android/*.iml
+packages/app/ios/App/Pods/

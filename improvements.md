@@ -10,24 +10,34 @@ is green (201 unit tests, 13 e2e).
 
 ## Blocking Phase 12's close
 
-### 1. 25 of the 30 units have no art
+### 1. Six foods still have no art
 
-`npm run check-sprites` reports art for `ant`, `beaver`, `cricket`, `duck`, `fish` only. Missing:
-badger, blowfish, camel, crab, dodo, dog, elephant, flamingo, giraffe, hedgehog, horse, kangaroo,
-mosquito, otter, ox, peacock, pig, rabbit, rat, sheep, shrimp, sloth, snail, spider, swan.
+`cupcake`, `garlic`, `honey`, `meatBone`, `melon`, `peanut` render as lettered tiles.
+37 of 43 slots are filled. `REQUIRE_ALL` in `packages/app/scripts/check-sprites.ts` stays `false`
+until these land, then flips to `true` so a missing sprite fails the build (PLAN.md Phase 12 step 6).
 
-Everything else in Phase 12 is done; this is the one deliverable left, and it is an **owner task**
-(PLAN.md Phase 12 step 6). `REQUIRE_ALL` in `packages/app/scripts/check-sprites.ts` stays `false`
-until they all land, then flips to `true` so a missing sprite fails the build.
+There are ~10 unused images left in `sprites/` (`Portraits2_06/12/13/15/17/21/23/27/29`, `Rock2`),
+but they are all creature faces — a demon portrait labelled "Honey" reads worse than the lettered
+tile does, so they were deliberately not used for foods. Food art wants to look like an item.
 
-Related: `ant.jpg` is the only `.jpg` among `.png` files and still needs a transparent-background
-re-export (PLAN.md Appendix C #3).
+### 2. `ant.jpg` renders inside a white box
+
+It is the only JPG in the folder and JPG cannot store transparency, so the sprite sits on a white
+square while every other unit is cut out. Needs a re-export as a transparent PNG or WebP
+(PLAN.md Appendix C #3).
+
+### 3. Five slots reuse a palette variant of a character already on the board
+
+`Portraits_XX` and `Portraits2_XX` are the same 15 characters in two palettes, so rabbit, sheep,
+snail, giraffe and kangaroo are recoloured twins of five tier-2 units. They are distinguishable by
+colour, name and stats, but two units that read as "the same guy" is a gameplay-legibility cost.
+Five genuinely new 32x32 characters would clear it.
 
 ---
 
 ## Latent — cheap now, expensive later
 
-### 2. Residual risk in the replay fold's compaction point
+### 4. Residual risk in the replay fold's compaction point
 
 `packages/app/src/replay/fold.ts` mirrors the sim's sparse 5-slot board and compacts where the sim
 does — which in the log is the moment just before each `attack` event.
@@ -41,7 +51,7 @@ No current content reaches it — `onBeforeAttack` has no units at all, and `kan
 explicitly, which changes the log format and regenerates **every** golden, so it deserves its own
 PR with a careful golden review. Best done once tiers 4–6 exist and the ability set is settled.
 
-### 3. Pointer-drag session leaks
+### 5. Pointer-drag session leaks
 
 `packages/app/src/dnd/useDrag.ts`:
 
@@ -58,24 +68,24 @@ unmounts" would cover it.
 
 ## Correctness questions to settle, then lock with a test
 
-### 4. `mergeInto` grants `+1 exp` on top of the incoming unit's exp
+### 6. `mergeInto` grants `+1 exp` on top of the incoming unit's exp
 
 `packages/sim/src/shop.ts`. Two level-1 units at 1 exp each merge to exp 3 (= level 2). It matches
 PLAN.md §1.4 as written and is probably intended, but nothing tests the *stacking* case, so it can
 drift silently.
 
-### 5. Tier progression outruns the content
+### 7. Tier progression outruns the content
 
 `maxTierForTurn` reaches tier 6 at turn 11, but only tiers 1–3 have units (30 of them). From turn 7
 the shop stops gaining unit variety, while tier-4 `melon` and tier-6 `peanut` do start appearing.
 Expected for Phase 12 — it is simply what the late game will feel like until tiers 4–6 exist.
 
-### 6. `status` effect logs `applied: true` even when the status was already held
+### 8. `status` effect logs `applied: true` even when the status was already held
 
 `packages/sim/src/effects.ts` dedupes the mutation but logs unconditionally, so the replay pops a
 phantom item indicator for a no-op.
 
-### 7. Dragging a unit onto its own slot flashes "refused"
+### 9. Dragging a unit onto its own slot flashes "refused"
 
 `ShopScreen.onDrop` builds `{t:'reorder', from: n, to: n}`; `reorder` rejects `from === to`;
 `dispatch` reads that as a refusal and flashes the gold counter at the player for a harmless no-op.
@@ -83,7 +93,7 @@ phantom item indicator for a no-op.
 Bundled here: `onEndTurn` calls `setScreen('battle')` unconditionally, so if `endTurnAndBattle` ever
 returned `null` the player would land on the battle screen replaying the *previous* fight.
 
-### 8. Duplicate units in one shop roll
+### 10. Duplicate units in one shop roll
 
 `rollShop` picks per slot, so the same unit can appear two or three times in one shop. Fine in SAP,
 but it is currently accidental rather than a decision.
@@ -94,16 +104,16 @@ but it is currently accidental rather than a decision.
 
 | # | File | Issue |
 |---|---|---|
-| 9 | `store/runStore.ts` | `persist(run)` re-serializes the whole growing run to `localStorage` synchronously on **every** dispatch. Fine now; it is on the interaction path. |
-| 10 | `eslint.config.js` | `eslint-plugin-react-hooks` is a `packages/app` dependency imported by the **root** config. Works only via hoisting. |
-| 11 | `screens/*.tsx` | Inline style objects everywhere despite a `global.css`; every card rebuilds its style object each render. `ShopScreen` (129 lines) and `BattleScreen` (~127) are closing on the 300-line cap. |
-| 12 | `sim/src/instance.ts` | `makeInstance` silently ignores `spec.level` when `spec.exp` is also passed: `{level: 3, exp: 0}` yields a level-1 unit. |
-| 13 | `components/UnitCard.tsx` | The long-press timer is not cleared on unmount; `onPointerUp` hides the tooltip while a mouse is still hovering. |
-| 14 | `tools/simcli/src/run-cli.ts` | `result.log.teams[0] ? … : 0` is a dead ternary (always truthy), and `turn - 1` is wrong on the turn that ends the run. |
-| 15 | `store/runStore.ts` | `startRun` calls `clearRun()` immediately before `persist(run)`: the clear is dead. |
-| 16 | `sim/src/summon.ts` | Uses `.indexOf(u)` where `positionOf` is already imported two lines up. |
-| 17 | `components/EventLog.tsx` | Dev-only, `overflow: hidden`, so the newest events are the ones you cannot see. |
-| 18 | `packages/app/src/assets/units/` | No sprite for the new `peanut` food (foods are not covered by `check-sprites`, so it renders as a lettered tile). |
+| 11 | `store/runStore.ts` | `persist(run)` re-serializes the whole growing run to `localStorage` synchronously on **every** dispatch. Fine now; it is on the interaction path. |
+| 12 | `eslint.config.js` | `eslint-plugin-react-hooks` is a `packages/app` dependency imported by the **root** config. Works only via hoisting. |
+| 13 | `screens/*.tsx` | Inline style objects everywhere despite a `global.css`; every card rebuilds its style object each render. `ShopScreen` (129 lines) and `BattleScreen` (~127) are closing on the 300-line cap. |
+| 14 | `sim/src/instance.ts` | `makeInstance` silently ignores `spec.level` when `spec.exp` is also passed: `{level: 3, exp: 0}` yields a level-1 unit. |
+| 15 | `components/UnitCard.tsx` | The long-press timer is not cleared on unmount; `onPointerUp` hides the tooltip while a mouse is still hovering. |
+| 16 | `tools/simcli/src/run-cli.ts` | `result.log.teams[0] ? … : 0` is a dead ternary (always truthy), and `turn - 1` is wrong on the turn that ends the run. |
+| 17 | `store/runStore.ts` | `startRun` calls `clearRun()` immediately before `persist(run)`: the clear is dead. |
+| 18 | `sim/src/summon.ts` | Uses `.indexOf(u)` where `positionOf` is already imported two lines up. |
+| 19 | `components/EventLog.tsx` | Dev-only, `overflow: hidden`, so the newest events are the ones you cannot see. |
+| 20 | `packages/app/src/assets/units/` | Mixed source resolutions (32x32 pixel art next to 288x288 and 554x554 images) mean `image-rendering: pixelated` is right for most sprites and slightly harsh on the few large non-pixel ones. |
 
 ---
 

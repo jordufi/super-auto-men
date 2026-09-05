@@ -17,6 +17,7 @@ export function UnitSprite({ defId, size }: { defId: string; size: number }): Re
       <img
         src={url}
         alt={defId}
+        className="sprite"
         draggable={false}
         style={{ width: size, height: size, objectFit: 'contain', pointerEvents: 'none' }}
       />

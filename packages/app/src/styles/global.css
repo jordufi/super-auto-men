@@ -131,3 +131,11 @@ button:disabled {
   0% { transform: translate(-50%, 0); opacity: 1; }
   100% { transform: translate(-50%, -70px); opacity: 0; }
 }
+
+/*
+ * Most of the roster is 32x32 pixel art drawn at 84-96px, so the browser's default smoothing
+ * turns it to mush. The app README has always documented this; it was never actually applied.
+ */
+.sprite {
+  image-rendering: pixelated;
+}

@@ -16,7 +16,6 @@ export interface UnitInstance {
   exp: number // 0-5, drives level
   tmpAtk: number // temporary buffs, dropped at end of battle
   tmpHp: number
-  perk?: DefId // held food item
   statuses: Status[]
 }
 

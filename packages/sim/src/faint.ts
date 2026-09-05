@@ -50,6 +50,10 @@ export function dealDamage(
   from?: InstanceId,
 ): void {
   if (amount <= 0) return
+  // Effects resolve every target BEFORE dealing damage (effects.ts), so by the time this runs the
+  // unit may already have died and left the board. Hitting a corpse would log phantom damage and
+  // fire onHurt on a unit nobody can see.
+  if (isDead(target) || !findUnit(state, target.iid)) return
   const mod = modifyIncoming(target, amount)
   if (mod.consumed) {
     removeStatus(target, mod.consumed)

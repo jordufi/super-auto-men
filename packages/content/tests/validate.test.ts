@@ -17,7 +17,7 @@ function* walkEffects(e: Effect): Generator<Effect> {
 describe('content registry', () => {
   it('parses every definition (import would have thrown otherwise)', () => {
     expect(units.length).toBe(34) // 30 shop units + 4 tokens
-    expect(Object.keys(FOODS)).toHaveLength(8)
+    expect(Object.keys(FOODS)).toHaveLength(9)
   })
 
   it('ids are unique and match export names', () => {

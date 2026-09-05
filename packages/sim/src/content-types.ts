@@ -34,7 +34,6 @@ export type Target =
 export type Effect =
   | { kind: 'buff'; target: Target; atk: Lvl3; hp: Lvl3; temporary: boolean }
   | { kind: 'damage'; target: Target; amount: Lvl3 }
-  | { kind: 'heal'; target: Target; amount: Lvl3 }
   | {
       kind: 'summon'
       defId: DefId

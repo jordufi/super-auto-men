@@ -8,6 +8,14 @@ export { BOTS, botTeam, botUnits } from './bots'
 export type { BotUnit } from './bots'
 export type { CustomFnId } from './custom'
 export {
+  TeamSchema,
+  SlotsSchema,
+  UnitInstanceSchema,
+  parseTeam,
+  safeParseTeam,
+  safeParseTeams,
+} from './team-schema'
+export {
   UnitDefSchema,
   FoodDefSchema,
   EffectSchema,

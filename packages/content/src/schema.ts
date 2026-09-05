@@ -92,7 +92,6 @@ export const EffectSchema: z.ZodType<Effect> = z.lazy(() =>
       temporary: z.boolean(),
     }),
     z.object({ kind: z.literal('damage'), target: TargetSchema, amount: Lvl3Schema }),
-    z.object({ kind: z.literal('heal'), target: TargetSchema, amount: Lvl3Schema }),
     z.object({
       kind: z.literal('summon'),
       defId: Id,

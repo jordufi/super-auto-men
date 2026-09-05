@@ -4,6 +4,8 @@ import { newBattleState } from '../src/battle'
 import { apply } from '../src/effects'
 import { makeRng } from '../src/rng'
 import { drain } from '../src/queue'
+import { dealDamage } from '../src/faint'
+import { makeInstance } from '../src/instance'
 import { fakeContent } from './fakeContent'
 import { team, u } from './helpers'
 
@@ -104,5 +106,27 @@ describe('apply', () => {
     drain(s, makeRng(1), c)
     expect(s.log.map((e) => e.t)).toEqual(['damage', 'faint', 'ability', 'summon'])
     expect(s.teams[1].slots[0]).toMatchObject({ defId: 'tok' })
+  })
+})
+
+describe('dealDamage board guard', () => {
+  // `apply` resolves every target BEFORE dealing damage, so a target can already have died and
+  // left the board by the time its turn comes. Damaging it would log phantom damage against a
+  // unit nobody can see and fire onHurt on a corpse.
+  it('ignores a unit that is not on the board', () => {
+    const state = newBattleState(team([u('a', 1, 5)], 0), team([u('b', 1, 5)], 1), 1)
+    const ghost = makeInstance({ defId: 'tok', atk: 1, hp: 5 }, 'ghost') // never placed
+    dealDamage(state, content, ghost, 3, '0-0-a')
+    expect(state.log).toEqual([])
+    expect(ghost.hp).toBe(5)
+  })
+
+  it('ignores a unit that is on the board but already dead', () => {
+    const state = newBattleState(team([u('a', 1, 5)], 0), team([u('b', 1, 5)], 1), 1)
+    const victim = state.teams[1].slots[0]!
+    victim.hp = 0
+    dealDamage(state, content, victim, 3, '0-0-a')
+    expect(state.log).toEqual([])
+    expect(victim.hp).toBe(0)
   })
 })

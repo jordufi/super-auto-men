@@ -100,13 +100,14 @@ The implementer should not have to look anything up. Everything needed for M0–
 5. **Loop guard:** after 1000 attack rounds, the result is `draw` and an `end` event is emitted. This prevents infinite loops from bugs.
 6. **Summons in battle** take the fainted unit's slot. If a summon happens with no free slot on that side, nothing is summoned. When a slot is taken by a summon, fire `onFriendSummoned` on all other friends and `onEnemySummoned` on all enemies.
 7. **Temporary buffs** (from `temporary: true` effects) are held in `tmpAtk` / `tmpHp` on the instance and are added to `atk`/`hp` for all calculations. They are dropped when the battle ends (the shop-side team never sees them). The sim returns the *starting* snapshot in `BattleLog.teams`; the run state keeps its own copy of the team unchanged by battle.
-8. **Damage and hp:** damage subtracts from hp. hp can go negative; a unit with hp ≤ 0 faints. Healing cannot exceed... (no max hp in SAP: healing is just +hp, so `heal` is a permanent hp buff with `atk: 0`; keep `heal` as a separate effect kind only because it reads better in content).
+8. **Damage and hp:** damage subtracts from hp. hp can go negative; a unit with hp ≤ 0 faints. There is **no max hp** in SAP, so healing is just `+hp` — a `buff` with `atk: 0`. There is no separate `heal` effect kind (Appendix C #2, resolved).
 
 ### 1.4 Levels, exp, merging
 
 - `exp` runs 0–5. Level 1 = exp 0–1, level 2 = exp 2–4, level 3 = exp 5. `level` is derived from `exp`; store both but always recompute `level` from `exp` in one helper `levelFromExp(exp)`.
 - **Merge** (buy same defId onto a unit, or drag same defId onto a unit): the surviving unit gets `exp = min(5, exp1 + exp2 + 1)`, `atk = max(atk1, atk2) + 1`, `hp = max(hp1, hp2) + 1`. If the merge crosses a level threshold, fire `onLevelUp` on the unit and add one random unit of `min(6, currentMaxTier + 1)` to the shop in a new temporary slot (the SAP "level-up bonus pet").
 - **Merging never destroys a held item.** The survivor keeps its own statuses and **inherits any status the other unit held that it does not already have** (order: its own first, then the inherited ones). A shop unit carries no statuses, so for a buy-merge this is exactly "keeps its own perk"; it matters only for a drag-merge, where both units are on the board and the older wording ("keeps the perk of the unit already on the board") did not say which one wins. Locked by `shop.test.ts` / `shop-abilities.test.ts`.
+- **Temporary buffs merge like permanent ones:** `tmpAtk = max(tmpAtk1, tmpAtk2)`, `tmpHp = max(tmpHp1, tmpHp2)` — the same `max` the base stats use, without the `+1` merge bonus (that is a one-off for base stats). A cupcake on the unit that is merged away is therefore not silently lost.
 - Level 3 units cannot gain more exp; buying a same-defId onto a level 3 unit is refused (action is a no-op and returns `state` unchanged with no events).
 
 ### 1.5 Trigger ordering (a game rule, locked by golden tests)
@@ -994,6 +995,6 @@ npm run android:sync && npm run android:open
 ## Appendix C — Open questions (append here as they arise; do not block on them)
 
 1. Exact SAP tie-break for simultaneous triggers across sides (§1.5 rule 3 is our assumption; confirm during playtesting and update goldens if wrong).
-2. Whether `heal` should be a distinct effect kind or an alias of `buff` with `atk: 0`. Currently distinct.
+2. ~~Whether `heal` should be a distinct effect kind or an alias of `buff` with `atk: 0`.~~ **Resolved (Phase 12 review):** alias. `heal` was never used by any unit or food and duplicated `buff` with `atk: 0`, so the effect kind was removed from the vocabulary. Healing content is written as a `buff`.
 3. Sprite `1.jpg` needs a transparent-background re-export; until then the ant uses it with a white box.
 4. Display names for the 30 units (owner will provide when renaming from SAP ids).

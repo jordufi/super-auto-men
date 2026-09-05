@@ -60,6 +60,12 @@ describe('shop-phase abilities', () => {
     expect(lost.team[0]).toMatchObject({ atk: 3, hp: 2 })
   })
 
+  it('the peanut is what makes the poison status reachable in a real game', () => {
+    const s = state([F('peanut')], [['sloth', 1, 1]])
+    const after = act(s, { t: 'buyFood', shopIndex: 0, target: 0 }).state
+    expect(after.team[0]!.statuses).toEqual(['poison'])
+  })
+
   it('rabbit adds health to whatever a friend eats', () => {
     const s = state([F('apple')], [['sloth', 1, 1], ['rabbit', 3, 2]])
     const after = act(s, { t: 'buyFood', shopIndex: 0, target: 0 }).state

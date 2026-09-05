@@ -19,13 +19,11 @@ import {
 
 type Args = Record<string, unknown> | undefined
 
-/** Reads a [L1, L2, L3] argument at the firing unit's level. */
-function lvl(args: Args, key: string, fallback: number): number {
-  const v = args?.[key]
-  if (Array.isArray(v) && v.length === 3) return Number(v[0])
-  return typeof v === 'number' ? v : fallback
-}
-
+/**
+ * Reads a numeric argument at the firing unit's level. A [L1, L2, L3] argument scales; a plain
+ * number does not. This is the ONLY arg accessor: an earlier `lvl()` helper silently read index 0
+ * of a level array, so a level-3 unit got level-1 numbers with no error and no failing test.
+ */
 function lvlAt(args: Args, key: string, ctx: TriggerCtx, fallback: number): number {
   const v = args?.[key]
   if (Array.isArray(v) && v.length === 3) return Number(v[ctx.level - 1])
@@ -77,7 +75,7 @@ const elephantBehind: CustomFn = (s, ctx, _rng, content, args) => {
   const behind = friends(s, ctx)
     .filter((u) => positionOf(slots, u.iid) > ctx.position)
     .slice(0, lvlAt(args, 'count', ctx, 1))
-  for (const u of behind) dealDamage(s, content, u, lvl(args, 'amount', 1), ctx.source)
+  for (const u of behind) dealDamage(s, content, u, lvlAt(args, 'amount', ctx, 1), ctx.source)
   return []
 }
 
@@ -92,11 +90,11 @@ const summonEnemy: CustomFn = (s, ctx, _rng, content, args) => {
 
 /** Spider: summon a random tier-3 unit with fixed stats. */
 const spiderSummon: CustomFn = (s, ctx, rng, content, args) => {
-  const tier = lvl(args, 'tier', 3)
+  const tier = lvlAt(args, 'tier', ctx, 3)
   const pool = content.shopPool(tier).filter((id) => content.getUnit(id).tier === tier)
   if (pool.length === 0) return []
-  const atk = lvl(args, 'atk', 2)
-  const hp = lvl(args, 'hp', 2)
+  const atk = lvlAt(args, 'atk', ctx, 2)
+  const hp = lvlAt(args, 'hp', ctx, 2)
   summonUnit(s, content, ctx.side, ctx.position, rng.pick(pool), { atk, hp })
   return []
 }

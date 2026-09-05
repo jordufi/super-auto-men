@@ -163,6 +163,15 @@ describe('shopReducer', () => {
     expect(merged.team[0]!.statuses).toEqual(['honey'])
   })
 
+  it('a merge keeps the best temporary buff instead of dropping the mover’s (PLAN.md 1.4)', () => {
+    const two = state({ units: [['sloth', 1, 1], ['sloth', 1, 1]] })
+    two.team[0]!.tmpAtk = 1
+    two.team[1]!.tmpAtk = 4 // the mover carries the better cupcake
+    two.team[1]!.tmpHp = 3
+    const merged = act(two, { t: 'reorder', from: 1, to: 0 }).state
+    expect(merged.team[0]).toMatchObject({ tmpAtk: 4, tmpHp: 3 })
+  })
+
   it('a level-3 unit cannot absorb more copies', () => {
     const before = state({ units: [['sloth', 5, 5, 5]] })
     expect(before.team[0]!.level).toBe(3)

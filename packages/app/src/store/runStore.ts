@@ -15,6 +15,8 @@ export interface RunStore {
   events: BattleEvent[]
   /** Bumped whenever the reducer refused an action, so the UI can flash the gold counter. */
   refused: number
+  /** Set when a saved run had to be dropped, so the menu can say so instead of doing nothing. */
+  loadError: string | null
   lastBattle: BattleLog | null
   /** The run as it stood when `lastBattle` was fought. The battle screen shows this, not `state`,
    *  so replaying the log does not spoil its own result. */
@@ -39,6 +41,7 @@ export const useRunStore = create<RunStore>((set, get) => ({
   state: null,
   events: [],
   refused: 0,
+  loadError: null,
   lastBattle: null,
   battleSnapshot: null,
   opponents: LocalBots,
@@ -47,20 +50,33 @@ export const useRunStore = create<RunStore>((set, get) => ({
     const run = startRun(seed, CONTENT)
     clearRun()
     persist(run)
-    set({ run, state: run.state, events: [], lastBattle: null, battleSnapshot: null, refused: 0 })
+    set({ run, state: run.state, events: [], lastBattle: null, battleSnapshot: null, refused: 0, loadError: null })
   },
 
-  /** Rebuilds a saved run by replaying it. Returns false if there is nothing to continue. */
+  /**
+   * Rebuilds a saved run by replaying it. Returns false if there is nothing to continue, and sets
+   * `loadError` when a save existed but had to be dropped — a rules change the save predates, or
+   * (from Phase 13) a ghost opponent this build cannot replay. Never fail silently here: this is
+   * the one place that can delete someone's run.
+   */
   continueRun: () => {
-    const saved = loadRun()
-    if (!saved) return false
+    const { run: saved, error } = loadRun()
+    if (!saved) {
+      if (error) console.warn(`[sam] saved run dropped: ${error}`)
+      set({ loadError: error })
+      return false
+    }
     try {
       const run = replayRun(saved.seed, saved.actions, saved.opponents, CONTENT)
       // A replayed run resumes in the shop, so there is no battle to show a snapshot for.
-      set({ run, state: run.state, events: [], lastBattle: run.lastBattle ?? null, battleSnapshot: null, refused: 0 })
+      set({ run, state: run.state, events: [], lastBattle: run.lastBattle ?? null, battleSnapshot: null, refused: 0, loadError: null })
       return true
-    } catch {
-      clearRun() // a save the current rules can no longer replay is not worth keeping
+    } catch (err) {
+      // A save the current rules can no longer replay is not worth keeping, but losing a run
+      // without a word in the console is how this becomes undebuggable in the wild.
+      console.error('[sam] could not replay the saved run; dropping it', err)
+      clearRun()
+      set({ loadError: 'this saved run no longer replays under the current rules' })
       return false
     }
   },
@@ -95,11 +111,11 @@ export const useRunStore = create<RunStore>((set, get) => ({
 
   reset: () => {
     clearRun()
-    set({ run: null, state: null, events: [], lastBattle: null, battleSnapshot: null, refused: 0 })
+    set({ run: null, state: null, events: [], lastBattle: null, battleSnapshot: null, refused: 0, loadError: null })
   },
 }))
 
 /** True when a run is waiting to be continued (used by the menu). */
 export function hasSavedRun(): boolean {
-  return loadRun() !== null
+  return loadRun().run !== null
 }

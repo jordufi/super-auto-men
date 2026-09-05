@@ -34,14 +34,6 @@ export function apply(state: BattleState, e: Effect, ctx: TriggerCtx, rng: Rng, 
       for (const t of resolveTarget(state, e.target, ctx, rng)) dealDamage(state, content, t, amount, ctx.source)
       return
     }
-    case 'heal': {
-      const amount = at(e.amount, ctx.level)
-      for (const t of resolveTarget(state, e.target, ctx, rng)) {
-        t.hp += amount
-        state.log.push({ t: 'buff', unit: t.iid, atk: 0, hp: amount, temporary: false })
-      }
-      return
-    }
     case 'summon': {
       const n = at(e.count, ctx.level)
       const stats = e.stats ? { atk: at(e.stats.atk, ctx.level), hp: at(e.stats.hp, ctx.level) } : undefined

@@ -23,7 +23,6 @@ function fieldsAt(e: Effect, level: Level): Fields {
       withCount(e.target)
       break
     case 'damage':
-    case 'heal':
       f['amount'] = at(e.amount)
       withCount(e.target)
       break

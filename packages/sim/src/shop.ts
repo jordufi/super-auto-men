@@ -191,12 +191,23 @@ function reorder(s: ShopState, from: number, to: number, rng: Rng, content: Cont
  */
 function mergeInto(
   target: UnitInstance,
-  incoming: { atk: number; hp: number; exp: number; statuses?: readonly Status[] },
+  incoming: {
+    atk: number
+    hp: number
+    exp: number
+    tmpAtk?: number
+    tmpHp?: number
+    statuses?: readonly Status[]
+  },
 ): boolean {
   const before = target.level
   target.exp = Math.min(MAX_EXP, target.exp + incoming.exp + 1)
   target.atk = Math.max(target.atk, incoming.atk) + 1
   target.hp = Math.max(target.hp, incoming.hp) + 1
+  // The same `max` as the base stats, without the +1 (that bonus is a one-off): a cupcake on the
+  // unit being merged away is not silently lost.
+  target.tmpAtk = Math.max(target.tmpAtk, incoming.tmpAtk ?? 0)
+  target.tmpHp = Math.max(target.tmpHp, incoming.tmpHp ?? 0)
   target.level = levelFromExp(target.exp)
   for (const s of incoming.statuses ?? []) {
     if (!target.statuses.includes(s)) target.statuses.push(s)

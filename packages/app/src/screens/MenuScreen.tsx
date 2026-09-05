@@ -7,8 +7,9 @@ export function MenuScreen(): ReactNode {
   const [seed, setSeed] = useState(() => String(Date.now() % 100000))
   const startRun = useRunStore((s) => s.startRun)
   const continueRun = useRunStore((s) => s.continueRun)
+  const loadError = useRunStore((s) => s.loadError)
   const setScreen = useUiStore((s) => s.setScreen)
-  const [saved] = useState(hasSavedRun)
+  const [saved, setSaved] = useState(hasSavedRun)
 
   const start = (): void => {
     startRun(Number(seed) || 0)
@@ -56,6 +57,7 @@ export function MenuScreen(): ReactNode {
             data-testid="continue-run"
             onClick={() => {
               if (continueRun()) setScreen('shop')
+              else setSaved(false) // the save was dropped; stop offering it
             }}
             style={{ fontSize: 24, padding: '14px 40px', borderColor: 'var(--accent)', background: '#6c8cff33' }}
           >
@@ -63,6 +65,11 @@ export function MenuScreen(): ReactNode {
           </button>
         )}
       </div>
+      {loadError && (
+        <p data-testid="load-error" style={{ color: 'var(--atk)', margin: 0, fontSize: 15 }}>
+          Your saved run could not be loaded &mdash; {loadError}.
+        </p>
+      )}
     </div>
   )
 }

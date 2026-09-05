@@ -1,0 +1,81 @@
+{
+  "name": "basic-run",
+  "seed": 42,
+  "turns": [
+    {
+      "actions": [
+        {
+          "t": "buyUnit",
+          "shopIndex": 0,
+          "slot": 0
+        },
+        {
+          "t": "buyUnit",
+          "shopIndex": 1,
+          "slot": 1
+        },
+        {
+          "t": "buyFood",
+          "shopIndex": 1,
+          "target": 0
+        }
+      ],
+      "opponent": [
+        "sloth"
+      ]
+    },
+    {
+      "actions": [
+        {
+          "t": "buyUnit",
+          "shopIndex": 1,
+          "slot": 2
+        },
+        {
+          "t": "buyUnit",
+          "shopIndex": 1,
+          "slot": 3
+        },
+        {
+          "t": "sell",
+          "slot": 1
+        },
+        {
+          "t": "freeze",
+          "shopIndex": 0
+        }
+      ],
+      "opponent": [
+        "ant",
+        "sloth"
+      ]
+    },
+    {
+      "actions": [
+        {
+          "t": "buyUnit",
+          "shopIndex": 0,
+          "slot": 1
+        }
+      ],
+      "opponent": [
+        "horse",
+        "cricket",
+        "pig"
+      ]
+    }
+  ],
+  "expected": {
+    "turn": 4,
+    "phase": "shop",
+    "gold": 10,
+    "lives": 5,
+    "trophies": 3,
+    "team": [
+      "mosquito 3/3 L1",
+      "beaver 2/2 L1",
+      "horse 2/1 L1",
+      "cricket 1/2 L1"
+    ]
+  }
+}

@@ -68,7 +68,9 @@ export interface TriggerCtx {
 
 export interface PendingTrigger {
   source: InstanceId
+  defId: DefId // kept so onFaint abilities can resolve after the unit left the board
   trigger: Trigger
+  atk: number // effective attack when queued; the ordering key (PLAN.md §1.5)
   ctx: TriggerCtx
 }
 
@@ -85,15 +87,56 @@ export type BattleEvent =
   | { t: 'faint'; unit: InstanceId; side: Side; position: number }
   | { t: 'levelUp'; unit: InstanceId; level: 2 | 3 }
   | { t: 'gold'; amount: number }
-  | { t: 'shop'; op: string; amount: number }
+  | { t: 'shop'; op: string; atk: number; hp: number }
   | { t: 'end'; result: BattleResult }
+
+/** Shop-phase context visible to effects (gold, shop ops). Only present during the shop phase. */
+export interface ShopCtx {
+  gold: number
+  shop: ShopSlot[]
+}
 
 export interface BattleState {
   teams: [Team, Team]
   turn: number // run turn number, for scaling abilities
   log: BattleEvent[]
   queue: PendingTrigger[]
+  summonCounter: number // for unique summon instance ids
+  shop?: ShopCtx | undefined
 }
+
+// ---- Shop phase (ARCHITECTURE.md §4.6, PLAN.md §1.2) ----
+
+export interface ShopSlot {
+  kind: 'unit' | 'food'
+  defId: DefId
+  frozen: boolean
+  atk?: number | undefined // shop-buffed stats (e.g. duck); base stats when absent
+  hp?: number | undefined
+}
+
+export type RunPhase = 'shop' | 'battle' | 'won' | 'lost'
+
+export interface ShopState {
+  turn: number
+  gold: number
+  lives: number
+  trophies: number
+  team: Slots
+  shop: ShopSlot[] // units first, then foods
+  nextIid: number
+  phase: RunPhase
+  lastResult?: BattleResult | undefined
+}
+
+export type ShopAction =
+  | { t: 'buyUnit'; shopIndex: number; slot: number }
+  | { t: 'buyFood'; shopIndex: number; target: number }
+  | { t: 'sell'; slot: number }
+  | { t: 'reorder'; from: number; to: number }
+  | { t: 'freeze'; shopIndex: number }
+  | { t: 'roll' }
+  | { t: 'endTurn' }
 
 export interface BattleLog {
   seed: number

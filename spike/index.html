@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Super Auto Men — DOM rendering spike (Phase 6)</title>
+<style>
+  /* Throwaway page. Measures whether 12 CSS-transformed sprites hold 60fps on a real phone.
+     Only `transform` and `opacity` are ever animated (ARCHITECTURE.md §6.1). */
+  html, body { margin: 0; height: 100%; background: #1b1b24; overflow: hidden; font-family: system-ui, sans-serif; }
+  #stage {
+    position: absolute; left: 50%; top: 50%;
+    width: 1280px; height: 720px;
+    transform-origin: center;
+    background: linear-gradient(#2c3e50, #3d5a73);
+    border-radius: 12px;
+  }
+  .unit {
+    position: absolute; width: 140px; height: 140px;
+    background-size: contain; background-repeat: no-repeat; background-position: center bottom;
+    image-rendering: pixelated;
+    will-change: transform;
+    animation: bob 1.4s ease-in-out infinite;
+  }
+  .unit.flip { transform: scaleX(-1); animation-name: bobFlip; }
+  .unit.attack { animation: lunge 0.4s ease-out; }
+  .unit.flip.attack { animation: lungeFlip 0.4s ease-out; }
+  .unit.hurt { animation: shake 0.3s linear; }
+  .unit.flip.hurt { animation: shakeFlip 0.3s linear; }
+  .popup {
+    position: absolute; width: 80px; text-align: center;
+    color: #ff5d5d; font-weight: 800; font-size: 40px; text-shadow: 0 2px 0 #000;
+    pointer-events: none; will-change: transform, opacity;
+    animation: float 0.7s ease-out forwards;
+  }
+  #hud { position: fixed; left: 12px; top: 12px; color: #fff; font: 700 20px/1.3 monospace; background: #0008; padding: 8px 12px; border-radius: 8px; }
+  #hud .warn { color: #ffb347; }
+  #hud .bad { color: #ff5d5d; }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes bobFlip { 0%,100% { transform: scaleX(-1) translateY(0); } 50% { transform: scaleX(-1) translateY(-8px); } }
+  @keyframes lunge { 0% { transform: translateX(0) scale(1); } 40% { transform: translateX(60px) scale(1.15); } 100% { transform: translateX(0) scale(1); } }
+  @keyframes lungeFlip { 0% { transform: scaleX(-1) translateX(0) scale(1); } 40% { transform: scaleX(-1) translateX(60px) scale(1.15); } 100% { transform: scaleX(-1) translateX(0) scale(1); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+  @keyframes shakeFlip { 0%,100% { transform: scaleX(-1) translateX(0); } 25% { transform: scaleX(-1) translateX(-10px); } 75% { transform: scaleX(-1) translateX(10px); } }
+  @keyframes float { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-90px); opacity: 0; } }
+</style>
+</head>
+<body>
+<div id="hud">fps <span id="fps">–</span> · min <span id="min">–</span> · avg <span id="avg">–</span><br /><small>60 s sample · <span id="elapsed">0</span> s</small></div>
+<div id="stage"></div>
+<script>
+  // Sprites are served from the repo root: run `npx vite --host` in the repo root and open /spike/
+  const SPRITES = ['/sprites/1.jpg', '/sprites/2.png', '/sprites/3.png', '/sprites/4.png', '/sprites/5.png']
+  const stage = document.getElementById('stage')
+
+  function fit() {
+    const s = Math.min(innerWidth / 1280, innerHeight / 720)
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`
+  }
+  addEventListener('resize', fit)
+  fit()
+
+  // 6 units per side, fixed positions like the real board.
+  const units = []
+  for (let side = 0; side < 2; side++) {
+    for (let i = 0; i < 6; i++) {
+      const el = document.createElement('div')
+      el.className = 'unit' + (side === 1 ? ' flip' : '')
+      el.style.backgroundImage = `url(${SPRITES[(side * 6 + i) % SPRITES.length]})`
+      el.style.left = (side === 0 ? 560 - i * 100 : 620 + i * 100) + 'px'
+      el.style.top = (300 + (i % 2) * 40) + 'px'
+      el.style.animationDelay = (i * 0.17) + 's'
+      stage.appendChild(el)
+      units.push(el)
+    }
+  }
+
+  function restart(el, cls) {
+    el.classList.remove(cls)
+    void el.offsetWidth // restart the animation
+    el.classList.add(cls)
+    el.addEventListener('animationend', () => el.classList.remove(cls), { once: true })
+  }
+
+  function popup(el, text) {
+    const p = document.createElement('div')
+    p.className = 'popup'
+    p.textContent = text
+    p.style.left = (parseFloat(el.style.left) + 30) + 'px'
+    p.style.top = (parseFloat(el.style.top) - 20) + 'px'
+    stage.appendChild(p)
+    p.addEventListener('animationend', () => p.remove(), { once: true })
+  }
+
+  // Every 800 ms: a random attacker lunges, a random victim shakes and shows a damage number.
+  setInterval(() => {
+    const a = units[Math.floor(Math.random() * units.length)]
+    let b = units[Math.floor(Math.random() * units.length)]
+    if (b === a) b = units[(units.indexOf(a) + 1) % units.length]
+    restart(a, 'attack')
+    restart(b, 'hurt')
+    popup(b, '-' + (1 + Math.floor(Math.random() * 9)))
+  }, 800)
+
+  // FPS: rAF deltas, current = average of the last 60 frames, plus min/avg over a 60 s sample.
+  const fpsEl = document.getElementById('fps'), minEl = document.getElementById('min'),
+        avgEl = document.getElementById('avg'), elEl = document.getElementById('elapsed')
+  let last = performance.now(), frames = [], start = last, minFps = Infinity, sum = 0, n = 0
+  function tick(now) {
+    const dt = now - last
+    last = now
+    frames.push(dt)
+    if (frames.length > 60) frames.shift()
+    const fps = 1000 / (frames.reduce((x, y) => x + y, 0) / frames.length)
+    const elapsed = (now - start) / 1000
+    if (elapsed > 2 && elapsed <= 62) { // ignore the first 2 s of warm-up, sample 60 s
+      minFps = Math.min(minFps, fps); sum += fps; n++
+    }
+    fpsEl.textContent = fps.toFixed(0)
+    fpsEl.className = fps >= 55 ? '' : fps >= 45 ? 'warn' : 'bad'
+    if (n) { minEl.textContent = minFps.toFixed(0); avgEl.textContent = (sum / n).toFixed(0) }
+    elEl.textContent = Math.min(60, Math.max(0, elapsed - 2)).toFixed(0)
+    requestAnimationFrame(tick)
+  }
+  requestAnimationFrame(tick)
+</script>
+</body>
+</html>

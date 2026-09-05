@@ -1,0 +1,72 @@
+{
+  "name": "cricket-summons-zombie",
+  "seed": 42,
+  "turn": 1,
+  "a": [
+    "cricket"
+  ],
+  "b": [
+    "sloth:2/1"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-cricket",
+      "b": "1-0-sloth",
+      "dmgToA": 2,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-cricket",
+      "amount": 2,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-cricket"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-cricket",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-sloth",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-cricket",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "summon",
+      "unit": {
+        "iid": "0-s0-zombieCricket",
+        "defId": "zombieCricket",
+        "atk": 1,
+        "hp": 1,
+        "level": 1,
+        "exp": 0,
+        "tmpAtk": 0,
+        "tmpHp": 0,
+        "statuses": []
+      },
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

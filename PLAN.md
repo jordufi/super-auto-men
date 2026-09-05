@@ -423,13 +423,14 @@ packages/sim/src/queue.ts        # real implementation: enqueueBatch(), drain(),
 packages/sim/src/triggers.ts     # fire(): collects responders for a trigger on one or both sides
 packages/sim/src/effects.ts      # apply(): buff, damage, heal, summon, sequence, custom (status/gold/shop stubbed to throw 'not in battle')
 packages/sim/src/targets.ts      # resolveTarget()
-packages/sim/tests/golden/*.json
-packages/sim/tests/golden.test.ts
-packages/sim/tests/golden-helpers.ts
+packages/content/tests/golden/*.json     # goldens live in CONTENT: they exercise real unit defs, and sim tests may not import content
+packages/content/tests/golden.test.ts
+packages/content/tests/golden-helpers.ts
+packages/content/tests/determinism.test.ts  # real roster, 50 seeds
 packages/sim/tests/queue.test.ts
 packages/sim/tests/targets.test.ts
 packages/sim/tests/effects.test.ts
-package.json: "test:update-golden": "cross-env UPDATE_GOLDEN=1 vitest run --project sim"
+package.json: "test:update-golden": "cross-env UPDATE_GOLDEN=1 vitest run --project @sam/content golden"
 ```
 
 **Steps**
@@ -489,7 +490,7 @@ packages/sim/src/run.ts          # RunState, startRun(), applyAction(), endTurnA
 packages/sim/src/shopRules.ts    # slot counts by turn, tier by turn, costs (constants from §1.2)
 packages/sim/tests/shop.test.ts
 packages/sim/tests/run.test.ts
-packages/sim/tests/golden-run/*.json     # { seed, actions, expected: { trophies, lives, finalTeam, turn } }
+packages/content/tests/golden-run/*.json # { seed, turns: [{actions, opponent}], expected: { turn, phase, gold, lives, trophies, team } }
 tools/simcli: `npm run sim -- run --seed 42 --script path.json` prints each turn
 ```
 
@@ -509,7 +510,7 @@ tools/simcli: `npm run sim -- run --seed 42 --script path.json` prints each turn
    ```
 2. `shopReducer(state, action, rng, content)` implements §1.2 and §1.4. Invalid actions (not enough gold, slot out of range, buying onto a level-3 unit, etc.) return `{ state, events: [] }` unchanged — **never throw** for player-reachable invalid input; throw only for malformed actions (e.g. negative index).
 3. Shop-phase triggers reuse `queue.ts`/`effects.ts`. `effects.ts` now implements `gold` and `shop`. The shop-phase "battle state" is a `BattleState` with `teams: [playerTeam, emptyTeam]` so `resolveTarget` works unchanged; write `shopStateToBattleState()` and back in `shop.ts`.
-4. **RNG discipline:** the run has **one** RNG created from `seed`; the reducer receives it and advances it. The battle uses **its own** RNG seeded from `rng.int(2**31)` drawn at `endTurn`, so shop randomness and battle randomness are decoupled and a battle can be replayed alone from `BattleLog.seed`.
+4. **RNG discipline:** the run has **one** RNG created from `seed`; the reducer receives it and advances it. The battle uses **its own** RNG whose seed is derived only from `(runSeed, turn)` via `battleSeed()` in `run.ts`, never from the shop RNG. So shop randomness and battle randomness are decoupled, an extra roll cannot change the battle, and a battle can be replayed alone from `BattleLog.seed`. (Implemented in Phase 5; the earlier idea of drawing the battle seed from the shop RNG would have coupled them.)
 5. `run.ts`: `startRun(seed, content)` → `RunState` with turn 1, 10 gold, rolled shop. `applyAction(run, action)` pushes the action and reduces. `endTurnAndBattle(run, opponent: Team)` runs the `endTurn` action, simulates, applies win/loss/draw, advances turn, rolls the new shop, fires `onStartOfTurn`. `replayRun(seed, actions, opponents, content)` re-folds from scratch and returns the final `RunState` — this is what server validation will use later.
 6. Opponent selection is **not** in sim. `run.ts` takes the opponent `Team` as an argument.
 7. CLI `run` subcommand reads a JSON script `{ seed, turns: [ { actions: [...], opponent: ["ant","sloth"] }, ... ] }` and prints each turn's shop, actions, and battle summary.

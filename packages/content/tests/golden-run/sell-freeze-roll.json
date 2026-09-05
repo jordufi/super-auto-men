@@ -1,0 +1,75 @@
+{
+  "name": "sell-freeze-roll",
+  "seed": 42,
+  "turns": [
+    {
+      "actions": [
+        {
+          "t": "buyUnit",
+          "shopIndex": 1,
+          "slot": 0
+        },
+        {
+          "t": "buyUnit",
+          "shopIndex": 1,
+          "slot": 1
+        },
+        {
+          "t": "sell",
+          "slot": 1
+        },
+        {
+          "t": "buyUnit",
+          "shopIndex": 0,
+          "slot": 1
+        },
+        {
+          "t": "freeze",
+          "shopIndex": 0
+        }
+      ],
+      "opponent": [
+        "fish"
+      ]
+    },
+    {
+      "actions": [
+        {
+          "t": "buyUnit",
+          "shopIndex": 0,
+          "slot": 2
+        },
+        {
+          "t": "roll"
+        },
+        {
+          "t": "buyUnit",
+          "shopIndex": 9,
+          "slot": 0
+        }
+      ],
+      "opponent": [
+        "mosquito",
+        "ant"
+      ]
+    },
+    {
+      "actions": [],
+      "opponent": [
+        "pig:5/5"
+      ]
+    }
+  ],
+  "expected": {
+    "turn": 4,
+    "phase": "shop",
+    "gold": 10,
+    "lives": 5,
+    "trophies": 3,
+    "team": [
+      "fish 2/3 L1",
+      "mosquito 2/2 L1",
+      "beaver 2/2 L1"
+    ]
+  }
+}

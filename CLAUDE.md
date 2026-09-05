@@ -73,7 +73,7 @@ Rationale lives in [ARCHITECTURE.md](ARCHITECTURE.md) §11. The phase-by-phase p
 - **Dependency direction is enforced, not suggested.** `sim` imports nothing (relative imports only). `content` imports only `sim` types and `zod`. Neither ever imports from `app`. ESLint `no-restricted-imports` enforces this; do not disable it.
 - **Nondeterminism is banned at the lint level** in `packages/sim` and `packages/content`: `Math.random`, `Date`, timers, `fetch`, `window`, `document`. All randomness comes from the injected `Rng`.
 - **Gameplay state changes only through `shopReducer` / `simulate`.** No component, store, or helper mutates `UnitInstance`, `Team`, or `ShopState` directly.
-- **Adding a unit is exactly three things:** `packages/content/src/units/<id>.ts`, one export line in `units/index.ts`, one golden test covering the ability. If it needs more, it needs a `custom` function — a deliberate decision, not a shortcut.
+- **Adding a unit is exactly three things:** `packages/content/src/units/<id>.ts`, one export line in `units/index.ts`, one golden fixture in `packages/content/tests/golden/` covering the ability (create it with `"expectedEvents": null`, run `npm run test:update-golden`, review the log, commit). If it needs more, it needs a `custom` function — a deliberate decision, not a shortcut.
 - **Golden tests are never regenerated blind.** Read the diff, confirm the change is intended, then run `npm run test:update-golden` and say in the commit which goldens changed and why.
 - **File size cap ~300 lines.** Split before exceeding it.
 - **One concept per PR.**

@@ -1,0 +1,115 @@
+{
+  "name": "summon-fills-fainted-slot",
+  "seed": 42,
+  "turn": 1,
+  "a": [
+    "sloth:1/5",
+    "cricket:1/1"
+  ],
+  "b": [
+    "mosquito:2/2:L3"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "ability",
+      "source": "1-0-mosquito",
+      "trigger": "onStartOfBattle"
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-mosquito"
+    },
+    {
+      "t": "damage",
+      "unit": "0-1-cricket",
+      "amount": 1,
+      "from": "1-0-mosquito"
+    },
+    {
+      "t": "faint",
+      "unit": "0-1-cricket",
+      "side": 0,
+      "position": 1
+    },
+    {
+      "t": "ability",
+      "source": "0-1-cricket",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "summon",
+      "unit": {
+        "iid": "0-s0-zombieCricket",
+        "defId": "zombieCricket",
+        "atk": 1,
+        "hp": 1,
+        "level": 1,
+        "exp": 0,
+        "tmpAtk": 0,
+        "tmpHp": 0,
+        "statuses": []
+      },
+      "side": 0,
+      "position": 1
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-mosquito",
+      "dmgToA": 2,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 2,
+      "from": "1-0-mosquito"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-mosquito",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-mosquito",
+      "dmgToA": 2,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 2,
+      "from": "1-0-mosquito"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-mosquito",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-sloth",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-mosquito",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

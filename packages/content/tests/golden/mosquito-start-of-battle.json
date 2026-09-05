@@ -1,0 +1,63 @@
+{
+  "name": "mosquito-start-of-battle",
+  "seed": 42,
+  "turn": 1,
+  "a": [
+    "mosquito"
+  ],
+  "b": [
+    "sloth",
+    "sloth"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "ability",
+      "source": "0-0-mosquito",
+      "trigger": "onStartOfBattle"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-mosquito"
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-sloth",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "attack",
+      "a": "0-0-mosquito",
+      "b": "1-1-sloth",
+      "dmgToA": 1,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-mosquito",
+      "amount": 1,
+      "from": "1-1-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-1-sloth",
+      "amount": 2,
+      "from": "0-0-mosquito"
+    },
+    {
+      "t": "faint",
+      "unit": "1-1-sloth",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

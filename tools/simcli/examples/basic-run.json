@@ -1,0 +1,67 @@
+{
+  "seed": 42,
+  "turns": [
+    {
+      "actions": [
+        {
+          "t": "buyUnit",
+          "shopIndex": 0,
+          "slot": 0
+        },
+        {
+          "t": "buyUnit",
+          "shopIndex": 1,
+          "slot": 1
+        },
+        {
+          "t": "buyFood",
+          "shopIndex": 1,
+          "target": 0
+        }
+      ],
+      "opponent": [
+        "sloth"
+      ]
+    },
+    {
+      "actions": [
+        {
+          "t": "buyUnit",
+          "shopIndex": 1,
+          "slot": 2
+        },
+        {
+          "t": "buyUnit",
+          "shopIndex": 1,
+          "slot": 3
+        },
+        {
+          "t": "sell",
+          "slot": 1
+        },
+        {
+          "t": "freeze",
+          "shopIndex": 0
+        }
+      ],
+      "opponent": [
+        "ant",
+        "sloth"
+      ]
+    },
+    {
+      "actions": [
+        {
+          "t": "buyUnit",
+          "shopIndex": 0,
+          "slot": 1
+        }
+      ],
+      "opponent": [
+        "horse",
+        "cricket",
+        "pig"
+      ]
+    }
+  ]
+}

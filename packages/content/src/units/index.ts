@@ -1,0 +1,12 @@
+// One export line per unit (ARCHITECTURE.md §11). The registry validates everything exported here.
+export { ant } from './ant'
+export { beaver } from './beaver'
+export { cricket } from './cricket'
+export { duck } from './duck'
+export { fish } from './fish'
+export { horse } from './horse'
+export { mosquito } from './mosquito'
+export { otter } from './otter'
+export { pig } from './pig'
+export { sloth } from './sloth'
+export { zombieCricket } from './zombieCricket'

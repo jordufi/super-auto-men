@@ -40,6 +40,9 @@ npm test              # vitest, all packages
 npm run test:watch    # vitest in watch mode
 npm run build         # build every package that has a build step
 npm run format        # prettier
+npm run sim -- --seed 42 --a ant,cricket,horse --b beaver,duck --turn 3   # print a battle
+npm run sim -- run --script tools/simcli/examples/basic-run.json           # play a scripted run
+npm run test:update-golden   # regenerate golden fixtures AFTER reviewing the diff
 ```
 
 The gate before any change is considered done:
@@ -52,7 +55,7 @@ Commands that arrive in later phases (`npm run sim`, `npm run dev`, `npm run tes
 
 ## Project status
 
-Phase 0 of PLAN.md is complete: the monorepo builds, lints and tests with placeholder packages. See the phase map in PLAN.md §0.3 for what comes next.
+Phases 0 to 5 of PLAN.md are complete: the headless rules engine (battle, triggers, effects, shop, whole runs) with golden tests and the CLI printer. Phase 6 (the phone performance spike in `spike/`) passed at a flat 60 fps, so DOM rendering is confirmed. See the phase map in PLAN.md §0.3.
 
 ## Layout
 

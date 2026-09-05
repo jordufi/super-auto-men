@@ -16,10 +16,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write .",
-    "build": "npm run build --workspaces --if-present"
+    "build": "npm run build --workspaces --if-present",
+    "sim": "tsx tools/simcli/src/main.ts",
+    "test:update-golden": "cross-env UPDATE_GOLDEN=1 vitest run --project @sam/content golden"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@types/node": "26.4.1",
     "cross-env": "10.1.0",
     "eslint": "10.10.0",
     "globals": "17.12.0",

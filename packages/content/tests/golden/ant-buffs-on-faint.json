@@ -1,0 +1,64 @@
+{
+  "name": "ant-buffs-on-faint",
+  "seed": 42,
+  "turn": 1,
+  "a": [
+    "ant",
+    "sloth"
+  ],
+  "b": [
+    "sloth:3/1"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-ant",
+      "b": "1-0-sloth",
+      "dmgToA": 3,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-ant",
+      "amount": 3,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 2,
+      "from": "0-0-ant"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-ant",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-sloth",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-ant",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-sloth",
+      "atk": 2,
+      "hp": 1,
+      "temporary": false
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

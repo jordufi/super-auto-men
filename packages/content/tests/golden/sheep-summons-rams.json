@@ -1,0 +1,132 @@
+{
+  "name": "sheep-summons-rams",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "sheep:2/1"
+  ],
+  "b": [
+    "pig:9/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sheep",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sheep",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 2,
+      "from": "0-0-sheep"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-sheep",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-sheep",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "summon",
+      "unit": {
+        "iid": "0-s0-ram",
+        "defId": "ram",
+        "atk": 2,
+        "hp": 2,
+        "level": 1,
+        "exp": 0,
+        "tmpAtk": 0,
+        "tmpHp": 0,
+        "statuses": []
+      },
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "summon",
+      "unit": {
+        "iid": "0-s1-ram",
+        "defId": "ram",
+        "atk": 2,
+        "hp": 2,
+        "level": 1,
+        "exp": 0,
+        "tmpAtk": 0,
+        "tmpHp": 0,
+        "statuses": []
+      },
+      "side": 0,
+      "position": 1
+    },
+    {
+      "t": "attack",
+      "a": "0-s0-ram",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-s0-ram",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 2,
+      "from": "0-s0-ram"
+    },
+    {
+      "t": "faint",
+      "unit": "0-s0-ram",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "attack",
+      "a": "0-s1-ram",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-s1-ram",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 2,
+      "from": "0-s1-ram"
+    },
+    {
+      "t": "faint",
+      "unit": "0-s1-ram",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "b"
+    }
+  ]
+}

@@ -8,7 +8,7 @@ function pending(source: string, atk: number, position: number, side: Side): Pen
     defId: 'x',
     trigger: 'onFriendSummoned',
     atk,
-    ctx: { side, source, level: 1, position },
+    ctx: { side, source, level: 1, position, atk },
   }
 }
 

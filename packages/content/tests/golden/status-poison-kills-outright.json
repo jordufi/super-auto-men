@@ -1,0 +1,45 @@
+{
+  "name": "status-poison-kills-outright",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "sloth:1/20:poison"
+  ],
+  "b": [
+    "fish:2/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-fish",
+      "dmgToA": 2,
+      "dmgToB": 9
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 2,
+      "from": "1-0-fish"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-fish",
+      "amount": 9,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-fish",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

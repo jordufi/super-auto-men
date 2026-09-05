@@ -42,6 +42,7 @@ npm run build         # build every package that has a build step
 npm run format        # prettier
 npm run sim -- --seed 42 --a ant,cricket,horse --b beaver,duck --turn 3   # print a battle
 npm run sim -- run --script tools/simcli/examples/basic-run.json           # play a scripted run
+npm run sim -- list   # the whole roster: tiers, stats, ability text at each level
 npm run test:update-golden   # regenerate golden fixtures AFTER reviewing the diff
 npm run dev           # the game in a browser (Vite dev server)
 npm run preview       # serve the production build
@@ -70,7 +71,10 @@ In the shop you can either **tap** or **drag**:
 - tap a team unit, then another slot, to reorder or merge (or drag it there)
 - drag a team unit onto **Sell**, or select it and press Sell
 - select a shop card and press **Freeze** to keep it through the next roll
-- **Roll** costs 1 gold; **End turn** fights the bot for that turn
+- **Roll** costs 1 gold; **End turn** fights the bot for that turn and the battle plays out on the battle screen (1x, 2x, instant, or Skip)
+
+Closing the tab does not lose a run: the menu offers **Continue run**, which replays the saved
+`{seed, actions, opponents}` back into the same state.
 
 Dev-only URL parameters (also enabled in a build with `VITE_ALLOW_URL_PARAMS=1`):
 
@@ -95,7 +99,14 @@ The first run needs the browser once: `npx playwright install chromium`. After t
 
 ## Project status
 
-Phases 0 to 9 of PLAN.md are complete: the headless rules engine (battle, triggers, effects, shop, whole runs) with golden tests and the CLI printer, plus a playable browser app — menu, shop screen, taps and drag-and-drop, bot opponents and text-only battle results. Phase 6 (the phone performance spike in `spike/`) passed at a flat 60 fps, so DOM rendering is confirmed. Next up is Phase 10, the animated battle screen that replays a `BattleLog`. See the phase map in PLAN.md §0.3.
+Phases 0 to 12 of PLAN.md are complete — M0, M1 and M2:
+
+- **`sim`**: battles, the trigger queue, effects, statuses, the shop reducer and whole replayable runs.
+- **`content`**: 30 units across tiers 1-3, 4 tokens, 8 foods, 5 statuses, all locked by golden fixtures.
+- **`app`**: menu, shop (tap and drag), an animated battle screen that replays a `BattleLog`, bot opponents, and a run that survives closing the tab.
+- Phase 6 (the phone performance spike in `spike/`) passed at a flat 60 fps, so DOM rendering is confirmed.
+
+Art is the open item: 5 of the 30 units have sprites, the rest show lettered tiles (`npm run check-sprites` lists them; see [packages/app/README.md](packages/app/README.md) for the file format). Next up is Phase 13, Supabase ghosts. See the phase map in PLAN.md §0.3.
 
 ## Layout
 

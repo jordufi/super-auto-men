@@ -12,7 +12,7 @@ const state = () =>
     team([u('b0', 1, 1), u('b1', 5, 3), u('b2', 2, 2)], 1),
     1,
   )
-const ctx: TriggerCtx = { side: 0, source: '0-1-a1', level: 1, position: 1, triggerSource: '1-2-b2' }
+const ctx: TriggerCtx = { side: 0, source: '0-1-a1', level: 1, position: 1, atk: 3, triggerSource: '1-2-b2' }
 const ids = (t: Target, seed = 1) => resolveTarget(state(), t, ctx, makeRng(seed)).map((x) => x.iid)
 
 describe('resolveTarget', () => {

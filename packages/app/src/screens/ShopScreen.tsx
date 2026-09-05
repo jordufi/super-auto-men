@@ -1,4 +1,4 @@
-import { type PointerEvent, type ReactNode, useCallback, useState } from 'react'
+import { type PointerEvent, type ReactNode, useCallback } from 'react'
 import type { ShopAction } from '@sam/sim'
 import { ROLL_COST } from '@sam/sim'
 import { useRunStore } from '../store/runStore'
@@ -12,7 +12,6 @@ import { TeamBoard } from '../components/TeamBoard'
 import { ShopRow } from '../components/ShopRow'
 import { ActionBar } from '../components/ActionBar'
 import { EventLog } from '../components/EventLog'
-import { BattleResult } from '../components/BattleResult'
 
 export function ShopScreen(): ReactNode {
   const state = useRunStore((s) => s.state)
@@ -21,7 +20,7 @@ export function ShopScreen(): ReactNode {
   const selected = useUiStore((s) => s.selected)
   const select = useUiStore((s) => s.select)
   const drag = useUiStore((s) => s.drag)
-  const [showResult, setShowResult] = useState(false)
+  const setScreen = useUiStore((s) => s.setScreen)
 
   const onTap = useCallback(
     (source: DragSource) => {
@@ -73,7 +72,7 @@ export function ShopScreen(): ReactNode {
   const onEndTurn = (): void => {
     select(null)
     endTurn()
-    setShowResult(true)
+    setScreen('battle') // the result is already applied in sim; the battle screen only replays it
   }
 
   return (
@@ -125,7 +124,6 @@ export function ShopScreen(): ReactNode {
 
       <EventLog />
       <DragLayer team={state.team} shop={state.shop} />
-      {showResult && <BattleResult onContinue={() => setShowResult(false)} />}
     </>
   )
 }

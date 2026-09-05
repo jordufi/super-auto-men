@@ -2,8 +2,10 @@
 // Everything the UI does to the game goes through `dispatch` / `endTurn`.
 import { create } from 'zustand'
 import type { BattleEvent, BattleLog, ShopAction, ShopState } from '@sam/sim'
-import { type RunState, applyAction, endTurnAndBattle, startRun } from '@sam/sim'
-import { CONTENT, botTeam } from '@sam/content'
+import { type RunState, applyAction, endTurnAndBattle, makeRng, replayRun, startRun } from '@sam/sim'
+import { CONTENT } from '@sam/content'
+import { LocalBots, type OpponentSource } from '../net/opponents'
+import { SAVE_VERSION, clearRun, loadRun, saveRun } from './persist'
 
 export interface RunStore {
   run: RunState | null
@@ -14,10 +16,19 @@ export interface RunStore {
   /** Bumped whenever the reducer refused an action, so the UI can flash the gold counter. */
   refused: number
   lastBattle: BattleLog | null
+  opponents: OpponentSource
   startRun: (seed: number) => void
+  continueRun: () => boolean
   dispatch: (action: ShopAction) => void
   endTurn: () => void
   reset: () => void
+}
+
+/** Opponent picking must not touch the run RNG, or a replay would drift from the played run. */
+const opponentRng = (seed: number, turn: number): ReturnType<typeof makeRng> => makeRng((seed + turn * 104729) >>> 0)
+
+function persist(run: RunState): void {
+  saveRun({ saveVersion: SAVE_VERSION, seed: run.seed, actions: run.actions, opponents: run.opponents })
 }
 
 export const useRunStore = create<RunStore>((set, get) => ({
@@ -26,10 +37,27 @@ export const useRunStore = create<RunStore>((set, get) => ({
   events: [],
   refused: 0,
   lastBattle: null,
+  opponents: LocalBots,
 
   startRun: (seed) => {
     const run = startRun(seed, CONTENT)
+    clearRun()
+    persist(run)
     set({ run, state: run.state, events: [], lastBattle: null, refused: 0 })
+  },
+
+  /** Rebuilds a saved run by replaying it. Returns false if there is nothing to continue. */
+  continueRun: () => {
+    const saved = loadRun()
+    if (!saved) return false
+    try {
+      const run = replayRun(saved.seed, saved.actions, saved.opponents, CONTENT)
+      set({ run, state: run.state, events: [], lastBattle: run.lastBattle ?? null, refused: 0 })
+      return true
+    } catch {
+      clearRun() // a save the current rules can no longer replay is not worth keeping
+      return false
+    }
   },
 
   dispatch: (action) => {
@@ -41,14 +69,17 @@ export const useRunStore = create<RunStore>((set, get) => ({
       set({ events: [], refused: get().refused + 1 }) // the reducer refused: nothing changed
       return
     }
+    persist(run)
     set({ state: run.state, events })
   },
 
   endTurn: () => {
-    const { run } = get()
+    const { run, opponents } = get()
     if (!run) return
-    const result = endTurnAndBattle(run, botTeam(run.state.turn), CONTENT)
+    const opponent = opponents.pick(run.state.turn, run.state.trophies, opponentRng(run.seed, run.state.turn))
+    const result = endTurnAndBattle(run, opponent, CONTENT)
     if (!result) return
+    persist(run)
     set({
       state: run.state,
       events: [...result.endEvents, ...result.startEvents],
@@ -56,5 +87,13 @@ export const useRunStore = create<RunStore>((set, get) => ({
     })
   },
 
-  reset: () => set({ run: null, state: null, events: [], lastBattle: null, refused: 0 }),
+  reset: () => {
+    clearRun()
+    set({ run: null, state: null, events: [], lastBattle: null, refused: 0 })
+  },
 }))
+
+/** True when a run is waiting to be continued (used by the menu). */
+export function hasSavedRun(): boolean {
+  return loadRun() !== null
+}

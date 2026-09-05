@@ -48,12 +48,15 @@ export const TARGET_KINDS = [
   'backFriend',
   'randomFriend',
   'allFriends',
+  'friendsAhead',
+  'friendsBehind',
   'randomEnemy',
   'allEnemies',
   'frontEnemy',
   'highestAtkEnemy',
   'lowestHpEnemy',
   'lowestHpFriend',
+  'allUnits',
 ] as const
 
 export const TargetSchema: z.ZodType<Target> = z.discriminatedUnion('kind', [
@@ -66,12 +69,15 @@ export const TargetSchema: z.ZodType<Target> = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('backFriend') }),
   z.object({ kind: z.literal('randomFriend'), count: Count, excludeSelf: z.boolean().optional() }),
   z.object({ kind: z.literal('allFriends') }),
+  z.object({ kind: z.literal('friendsAhead'), count: Count }),
+  z.object({ kind: z.literal('friendsBehind'), count: Count }),
   z.object({ kind: z.literal('randomEnemy'), count: Count }),
   z.object({ kind: z.literal('allEnemies') }),
   z.object({ kind: z.literal('frontEnemy') }),
   z.object({ kind: z.literal('highestAtkEnemy') }),
   z.object({ kind: z.literal('lowestHpEnemy') }),
   z.object({ kind: z.literal('lowestHpFriend') }),
+  z.object({ kind: z.literal('allUnits') }),
 ])
 
 const Id = z.string().regex(/^[a-z][a-zA-Z0-9]*$/, 'ids are camelCase identifiers')
@@ -97,7 +103,7 @@ export const EffectSchema: z.ZodType<Effect> = z.lazy(() =>
     z.object({ kind: z.literal('gold'), amount: Lvl3Schema }),
     z.object({
       kind: z.literal('shop'),
-      op: z.literal('buffShopUnits'),
+      op: z.enum(['buffShopUnits', 'buffShopUnitsPermanent']),
       atk: Lvl3Schema,
       hp: Lvl3Schema,
     }),

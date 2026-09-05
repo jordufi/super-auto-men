@@ -9,7 +9,7 @@ import { team, u } from './helpers'
 
 const token: UnitDef = { id: 'tok', name: 'Token', tier: 0, base: { atk: 1, hp: 1 }, sprite: 'tok' }
 const content = fakeContent([token])
-const ctx: TriggerCtx = { side: 0, source: '0-0-x', level: 2, position: 0 }
+const ctx: TriggerCtx = { side: 0, source: '0-0-x', level: 2, position: 0, atk: 1 }
 const run = (state: ReturnType<typeof newBattleState>, e: Effect) => {
   apply(state, e, ctx, makeRng(1), content)
   return state

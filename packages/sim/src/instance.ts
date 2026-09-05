@@ -1,5 +1,6 @@
 import type { DefId, InstanceId, Level, UnitInstance } from './types'
 import { expForLevel, levelFromExp } from './level'
+import { BONE_ATK } from './statuses'
 
 export interface InstanceSpec {
   defId: DefId
@@ -26,7 +27,8 @@ export function makeInstance(spec: InstanceSpec, iid: InstanceId): UnitInstance 
 }
 
 export function effectiveAtk(u: UnitInstance): number {
-  return u.atk + u.tmpAtk
+  // Meat bone is a flat attack bonus for as long as it is held (PLAN.md §1.6).
+  return u.atk + u.tmpAtk + (u.statuses.includes('bone') ? BONE_ATK : 0)
 }
 
 export function effectiveHp(u: UnitInstance): number {

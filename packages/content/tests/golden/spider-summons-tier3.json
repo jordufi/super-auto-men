@@ -1,0 +1,91 @@
+{
+  "name": "spider-summons-tier3",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "spider:2/1"
+  ],
+  "b": [
+    "sloth:9/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-spider",
+      "b": "1-0-sloth",
+      "dmgToA": 9,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-spider",
+      "amount": 9,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 2,
+      "from": "0-0-spider"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-spider",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-spider",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "summon",
+      "unit": {
+        "iid": "0-s0-ox",
+        "defId": "ox",
+        "atk": 2,
+        "hp": 2,
+        "level": 1,
+        "exp": 0,
+        "tmpAtk": 0,
+        "tmpHp": 0,
+        "statuses": []
+      },
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "attack",
+      "a": "0-s0-ox",
+      "b": "1-0-sloth",
+      "dmgToA": 9,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-s0-ox",
+      "amount": 9,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 2,
+      "from": "0-s0-ox"
+    },
+    {
+      "t": "faint",
+      "unit": "0-s0-ox",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "b"
+    }
+  ]
+}

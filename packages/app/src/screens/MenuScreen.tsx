@@ -1,12 +1,14 @@
 import { type ReactNode, useState } from 'react'
-import { useRunStore } from '../store/runStore'
+import { hasSavedRun, useRunStore } from '../store/runStore'
 import { useUiStore } from '../store/uiStore'
 
 export function MenuScreen(): ReactNode {
   // `Date` is allowed in app code; it is banned only in sim and content.
   const [seed, setSeed] = useState(() => String(Date.now() % 100000))
   const startRun = useRunStore((s) => s.startRun)
+  const continueRun = useRunStore((s) => s.continueRun)
   const setScreen = useUiStore((s) => s.setScreen)
+  const [saved] = useState(hasSavedRun)
 
   const start = (): void => {
     startRun(Number(seed) || 0)
@@ -45,9 +47,22 @@ export function MenuScreen(): ReactNode {
           }}
         />
       </div>
-      <button data-testid="new-run" onClick={start} style={{ fontSize: 24, padding: '14px 40px' }}>
-        New run
-      </button>
+      <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
+        <button data-testid="new-run" onClick={start} style={{ fontSize: 24, padding: '14px 40px' }}>
+          New run
+        </button>
+        {saved && (
+          <button
+            data-testid="continue-run"
+            onClick={() => {
+              if (continueRun()) setScreen('shop')
+            }}
+            style={{ fontSize: 24, padding: '14px 40px', borderColor: 'var(--accent)', background: '#6c8cff33' }}
+          >
+            Continue run
+          </button>
+        )}
+      </div>
     </div>
   )
 }

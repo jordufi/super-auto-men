@@ -22,7 +22,7 @@ describe('bots', () => {
     const ids = team.slots.filter((u) => u !== null).map((u) => u.iid)
     expect(ids).toHaveLength(3)
     expect(new Set(ids).size).toBe(3)
-    expect(team.slots[0]).toMatchObject({ defId: 'beaver', atk: 2, hp: 3, level: 1 })
+    expect(team.slots[0]).toMatchObject({ defId: 'flamingo', atk: 3, hp: 1, level: 1 })
   })
 
   it('turn 11 and later reuse the last team', () => {
@@ -31,7 +31,20 @@ describe('bots', () => {
     expect(botUnits(1)).toBe(BOTS[0])
   })
 
+  it('tier 2 units appear from turn 3 and tier 3 from turn 5, never before', () => {
+    const tierOf = (id: string): number => UNITS[id]!.tier
+    for (const [i, team] of BOTS.entries()) {
+      const turn = i + 1
+      const maxTier = Math.min(6, Math.floor((turn + 1) / 2))
+      for (const unit of team) {
+        expect(tierOf(unit.defId), `turn ${turn}: ${unit.defId}`).toBeLessThanOrEqual(maxTier)
+      }
+    }
+    expect(BOTS.flat().some((b) => tierOf(b.defId) === 2)).toBe(true)
+    expect(BOTS.flat().some((b) => tierOf(b.defId) === 3)).toBe(true)
+  })
+
   it('levels are derived from the level field', () => {
-    expect(botTeam(10).slots[0]).toMatchObject({ level: 3, exp: 5 })
+    expect(botTeam(10).slots[0]).toMatchObject({ defId: 'blowfish', level: 3, exp: 5 })
   })
 })

@@ -1,0 +1,88 @@
+{
+  "name": "hedgehog-damages-all",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "hedgehog:3/2",
+    "sloth:1/5"
+  ],
+  "b": [
+    "pig:9/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-hedgehog",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 3
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-hedgehog",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 3,
+      "from": "0-0-hedgehog"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-hedgehog",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-hedgehog",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "damage",
+      "unit": "0-1-sloth",
+      "amount": 2,
+      "from": "0-0-hedgehog"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 2,
+      "from": "0-0-hedgehog"
+    },
+    {
+      "t": "attack",
+      "a": "0-1-sloth",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-1-sloth",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 1,
+      "from": "0-1-sloth"
+    },
+    {
+      "t": "faint",
+      "unit": "0-1-sloth",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "b"
+    }
+  ]
+}

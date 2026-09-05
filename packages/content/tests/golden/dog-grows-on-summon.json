@@ -1,0 +1,129 @@
+{
+  "name": "dog-grows-on-summon",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "cricket",
+    "dog:2/2"
+  ],
+  "b": [
+    "pig:9/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-cricket",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-cricket",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 1,
+      "from": "0-0-cricket"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-cricket",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-cricket",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "summon",
+      "unit": {
+        "iid": "0-s0-zombieCricket",
+        "defId": "zombieCricket",
+        "atk": 1,
+        "hp": 1,
+        "level": 1,
+        "exp": 0,
+        "tmpAtk": 0,
+        "tmpHp": 0,
+        "statuses": []
+      },
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-1-dog",
+      "trigger": "onFriendSummoned"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-dog",
+      "atk": 1,
+      "hp": 1,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-s0-zombieCricket",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-s0-zombieCricket",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 1,
+      "from": "0-s0-zombieCricket"
+    },
+    {
+      "t": "faint",
+      "unit": "0-s0-zombieCricket",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "attack",
+      "a": "0-1-dog",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 3
+    },
+    {
+      "t": "damage",
+      "unit": "0-1-dog",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 3,
+      "from": "0-1-dog"
+    },
+    {
+      "t": "faint",
+      "unit": "0-1-dog",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "b"
+    }
+  ]
+}

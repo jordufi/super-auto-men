@@ -1,0 +1,66 @@
+{
+  "name": "rat-summons-for-enemy",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "rat:4/1"
+  ],
+  "b": [
+    "sloth:9/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-rat",
+      "b": "1-0-sloth",
+      "dmgToA": 9,
+      "dmgToB": 4
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-rat",
+      "amount": 9,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 4,
+      "from": "0-0-rat"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-rat",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-rat",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "summon",
+      "unit": {
+        "iid": "1-s0-dirtyRat",
+        "defId": "dirtyRat",
+        "atk": 1,
+        "hp": 1,
+        "level": 1,
+        "exp": 0,
+        "tmpAtk": 0,
+        "tmpHp": 0,
+        "statuses": []
+      },
+      "side": 1,
+      "position": 1
+    },
+    {
+      "t": "end",
+      "result": "b"
+    }
+  ]
+}

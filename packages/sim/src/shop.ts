@@ -5,7 +5,7 @@ import type { BattleEvent, BattleState, ShopAction, ShopSlot, ShopState, Slots, 
 import type { ContentApi } from './content-types'
 import type { Rng } from './rng'
 import { SLOT_COUNT, cloneUnit, emptySlots } from './board'
-import { makeInstance } from './instance'
+import { effectiveAtk, makeInstance } from './instance'
 import { MAX_EXP, levelFromExp } from './level'
 import { apply } from './effects'
 import { fire } from './triggers'
@@ -137,7 +137,7 @@ function buyFood(s: ShopState, shopIndex: number, target: number, rng: Rng, cont
   s.gold -= FOOD_COST
   s.shop.splice(shopIndex, 1)
   withView(s, events, (v) => {
-    const ctx: TriggerCtx = { side: 0, source: unit.iid, level: unit.level, position: target }
+    const ctx: TriggerCtx = { side: 0, source: unit.iid, level: unit.level, position: target, atk: effectiveAtk(unit) }
     apply(v, food.effect, ctx, rng, content)
     fire(v, content, 'onEatFood', { sides: 0, only: unit.iid })
     fire(v, content, 'onFriendEatsFood', { sides: 0, exclude: unit.iid, triggerSource: unit.iid })
@@ -218,7 +218,16 @@ export function rollShop(s: ShopState, rng: Rng, content: ContentApi): void {
     for (let i = 0; i < Math.max(count, old.length); i++) {
       const prev = old[i]
       if (prev?.frozen) out.push(prev)
-      else if (i < count && pool.length > 0) out.push({ kind, defId: rng.pick(pool), frozen: false })
+      else if (i < count && pool.length > 0) {
+        const slot: ShopSlot = { kind, defId: rng.pick(pool), frozen: false }
+        // Canned food keeps buffing units that appear later in the run.
+        if (kind === 'unit' && s.shopBuff) {
+          const base = content.getUnit(slot.defId).base
+          slot.atk = base.atk + s.shopBuff.atk
+          slot.hp = base.hp + s.shopBuff.hp
+        }
+        out.push(slot)
+      }
     }
     return out
   }
@@ -242,12 +251,13 @@ function withView(s: ShopState, events: BattleEvent[], fn: (view: BattleState) =
     log: [],
     queue: [],
     summonCounter: s.nextIid,
-    shop: { gold: s.gold, shop: s.shop },
+    shop: { gold: s.gold, shop: s.shop, buff: s.shopBuff, lastResult: s.lastResult },
   }
   fn(view)
   s.team = view.teams[0].slots
   s.gold = view.shop!.gold
   s.shop = view.shop!.shop
+  s.shopBuff = view.shop!.buff
   s.nextIid = view.summonCounter
   events.push(...view.log)
 }

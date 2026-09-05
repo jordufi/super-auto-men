@@ -48,6 +48,14 @@ function fieldsAt(e: Effect, level: Level): Fields {
       for (const sub of e.effects) for (const [k, v] of Object.entries(fieldsAt(sub, level))) f[k] ??= v
       break
     case 'custom':
+      // Custom effects declare their numbers as [L1, L2, L3] args, so their text can be templated too.
+      for (const [k, v] of Object.entries(e.args ?? {})) {
+        if (Array.isArray(v) && v.length === 3 && v.every((n) => typeof n === 'number')) {
+          f[k] = v[level - 1] as number
+        } else if (typeof v === 'number') {
+          f[k] = v
+        }
+      }
       break
   }
   return f

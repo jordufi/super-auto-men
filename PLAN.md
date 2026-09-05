@@ -747,6 +747,13 @@ packages/app/tests/fold.test.ts
 - [ ] Speed and skip work.
 - [ ] Both e2e specs pass locally.
 
+**As built (Phase 10)**
+- `fold.ts` keeps each side as a **dense list of units**, not a 5-slot array: compaction is a sim-internal detail and only the order matters on screen. `boardAt` applies `damage` events and ignores the `attack` event's `dmgToA`/`dmgToB` (the sim emits both, so counting the attack too would double the damage).
+- Steps are grouped: any `damage` event is `parallelWith` the step before it, so the number pops while the attack or ability that caused it is playing. `groupAt(steps, i)` returns a head plus its followers.
+- A `faint` is drawn **before** it is applied, so the unit can fade out while still on the board; the next step removes it.
+- `useReplay` resets on a new log with React's "adjust state during render" pattern rather than a `setState` inside an effect, which the `react-hooks` lint rules reject.
+- Phase 8's text result overlay was deleted; `BattleScreen` owns `battle-result` and `continue` now.
+
 ---
 
 ## Phase 11 — Full run loop, run-end screen, local save, Playwright in CI
@@ -786,6 +793,12 @@ package.json: "test:e2e": "playwright test -c e2e/playwright.config.ts"
 - [ ] CI green including E2E.
 - [ ] Save/restore works and is replay-based (no serialized `ShopState` in localStorage; only `{seed, actions, opponentsByTurn, saveVersion}`).
 - [ ] Owner has completed a run.
+
+**As built (Phase 11)**
+- **Opponent choice must not consume the run RNG.** A replay re-runs the shop actions against a fresh RNG and reuses the *stored* opponents, so any draw made for matchmaking during live play would desync the shop rolls on restore. `runStore` passes `LocalBots` a separate RNG derived from `(seed, turn)`; `LocalBots` ignores it entirely today.
+- `RunEndScreen` already existed from Phase 7; this phase only added the save-clearing.
+- Playwright config stayed in `packages/app/` (`playwright.config.ts`, `e2e/`) instead of a root `e2e/` folder, and now builds with `VITE_ALLOW_URL_PARAMS=1` and serves the result with `vite preview` — the same artifact CI and the phone get. `npm run test:e2e` from the root still works.
+- CI gained a second job (`e2e`) that runs after `check`, installs chromium, and uploads `test-results/` and `playwright-report/` on failure.
 
 ---
 
@@ -837,6 +850,17 @@ tools/simcli: `npm run sim -- list` prints all units with tier, stats, ability t
 - [ ] 30 units + tokens + 8 foods + 5 statuses, all golden-tested.
 - [ ] Sprites in place for all units the owner has delivered; fallback for the rest.
 - [ ] CI green.
+
+**As built (Phase 12)**
+- `summonUnit` moved out of `effects.ts` into `packages/sim/src/summon.ts`, because honey makes `faint.ts` summon and faint must not depend on the effect interpreter.
+- `CustomFn` now takes the `ContentApi` as a parameter (`(state, ctx, rng, content, args)`), so a custom function can summon and deal damage without content having to reach back into its own registry.
+- `TriggerCtx` gained `atk`, the unit's effective attack when the trigger was queued. Badger needs it: by the time its faint ability resolves it is off the board.
+- Statuses live in `packages/sim/src/statuses.ts` and apply to **all** damage, attack and ability alike. Melon is checked first and consumed by the hit; the `status` event for that is logged right after the `attack` event, so the replay shows the shield breaking on the hit that broke it. Meat bone is a flat bonus inside `effectiveAtk`.
+- Goldens: 19 new battle fixtures (14 units + 5 statuses). Six abilities only exist in the shop — crab, shrimp, swan, giraffe, snail, rabbit — and are covered by `packages/content/tests/shop-abilities.test.ts` with the real `shopReducer` instead of a battle fixture that could never fire them. The same file covers cupcake, canned food and the salad bowl.
+- The team-spec grammar gained status tokens (`sloth:1/20:garlic`) so a status golden needs no food purchase.
+- `describeAbility` fills placeholders from a custom effect's `[L1, L2, L3]` args, so custom units get level-aware text too; a test asserts no `{placeholder}` survives for any unit or food at any level.
+- `basic-run.json` (golden run) changed by exactly one line: honey joined the tier-1 food pool, so turn 1 rolls honey instead of apple and the mosquito no longer gets +1/+1.
+- The bot table now uses tier-2 units from turn 3 and tier-3 from turn 5, locked by a test against `maxTierForTurn`.
 
 ---
 

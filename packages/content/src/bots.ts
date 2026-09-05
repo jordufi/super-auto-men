@@ -18,24 +18,21 @@ const u = (defId: DefId, atk: number, hp: number, level: Level = 1): BotUnit => 
   level,
 })
 
-/** Index 0 is turn 1. Index 0 of each team is the front unit. */
+/**
+ * Index 0 is turn 1. Index 0 of each team is the front unit. Tier 2 units appear from turn 3 and
+ * tier 3 from turn 5, matching the turns on which the player can first buy them (shopRules.ts).
+ */
 export const BOTS: readonly BotUnit[][] = [
   [u('sloth', 1, 1)],
   [u('cricket', 1, 2), u('ant', 2, 1)],
-  [u('beaver', 2, 3), u('duck', 1, 3), u('sloth', 1, 1)],
-  [u('pig', 3, 2), u('fish', 2, 3), u('cricket', 2, 3)],
-  [u('mosquito', 3, 3), u('horse', 2, 2), u('ant', 3, 2), u('otter', 2, 3)],
-  [u('fish', 4, 5, 2), u('beaver', 3, 4), u('cricket', 3, 4), u('duck', 2, 5)],
-  [u('pig', 5, 4), u('mosquito', 4, 4), u('horse', 4, 3), u('ant', 4, 3), u('sloth', 3, 3)],
-  [u('beaver', 6, 6, 2), u('fish', 5, 6, 2), u('otter', 4, 5), u('cricket', 4, 5), u('duck', 3, 6)],
-  [u('mosquito', 7, 7, 2), u('pig', 7, 5), u('horse', 6, 5, 2), u('ant', 6, 4), u('beaver', 5, 6)],
-  [
-    u('fish', 9, 9, 3),
-    u('beaver', 8, 8, 2),
-    u('mosquito', 8, 7, 2),
-    u('horse', 7, 6, 2),
-    u('ant', 7, 5, 2),
-  ],
+  [u('flamingo', 3, 1), u('duck', 1, 3), u('sloth', 1, 1)],
+  [u('elephant', 3, 5), u('shrimp', 2, 3), u('cricket', 2, 3)],
+  [u('hedgehog', 3, 2), u('camel', 2, 5), u('ant', 3, 2), u('otter', 2, 3)],
+  [u('peacock', 4, 6, 2), u('dog', 3, 4), u('cricket', 3, 4), u('duck', 2, 5)],
+  [u('badger', 5, 4), u('blowfish', 4, 6), u('kangaroo', 3, 4), u('sheep', 3, 3), u('sloth', 3, 3)],
+  [u('crab', 6, 8, 2), u('rat', 5, 6, 2), u('ox', 4, 6), u('spider', 4, 5), u('duck', 3, 6)],
+  [u('sheep', 7, 7, 2), u('badger', 7, 5), u('camel', 6, 8, 2), u('giraffe', 5, 7), u('dodo', 5, 6)],
+  [u('blowfish', 9, 9, 3), u('crab', 8, 10, 2), u('peacock', 8, 8, 2), u('ox', 7, 8, 2), u('kangaroo', 7, 6, 2)],
 ]
 
 /** Turn 11 and later reuse the last entry. */

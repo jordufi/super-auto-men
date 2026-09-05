@@ -1,0 +1,69 @@
+{
+  "name": "badger-hits-neighbours",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "badger:5/1",
+    "sloth:1/9"
+  ],
+  "b": [
+    "pig:9/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-badger",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 5
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-badger",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 5,
+      "from": "0-0-badger"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-badger",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-badger",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 5,
+      "from": "0-0-badger"
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-pig",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "damage",
+      "unit": "0-1-sloth",
+      "amount": 5,
+      "from": "0-0-badger"
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

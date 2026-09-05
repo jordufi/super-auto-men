@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import type { Effect } from '@sam/sim'
+import type { Effect, Target } from '@sam/sim'
+import { makeRng, newBattleState, resolveTarget } from '@sam/sim'
 import { CUSTOM } from '../src/custom'
+import { describeAbility, describeFood } from '../src/describe'
 import { FOODS, UNITS, foodPool, shopPool } from '../src/registry'
-import { UnitDefSchema } from '../src/schema'
+import { TARGET_KINDS, UnitDefSchema } from '../src/schema'
+import { teamFromSpec } from '../src/spec'
 
 const units = Object.values(UNITS)
 
@@ -13,8 +16,8 @@ function* walkEffects(e: Effect): Generator<Effect> {
 
 describe('content registry', () => {
   it('parses every definition (import would have thrown otherwise)', () => {
-    expect(units.length).toBeGreaterThanOrEqual(11)
-    expect(Object.keys(FOODS)).toContain('apple')
+    expect(units.length).toBe(34) // 30 shop units + 4 tokens
+    expect(Object.keys(FOODS)).toHaveLength(8)
   })
 
   it('ids are unique and match export names', () => {
@@ -55,7 +58,43 @@ describe('content registry', () => {
       'pig',
       'sloth',
     ])
-    expect(foodPool(1)).toEqual(['apple'])
+    expect(foodPool(1)).toEqual(['apple', 'honey'])
+  })
+
+  it('shopPool(3) is exactly the 30 non-token units, ten per tier', () => {
+    const pool = shopPool(3)
+    expect(pool).toHaveLength(30)
+    expect(new Set(pool).size).toBe(30)
+    for (const tier of [1, 2, 3] as const) {
+      expect(pool.filter((id) => UNITS[id]!.tier === tier)).toHaveLength(10)
+    }
+    expect([...pool].sort()).toEqual(pool) // alphabetical
+    for (const token of ['zombieCricket', 'dirtyRat', 'ram', 'bee']) {
+      expect(UNITS[token]!.tier).toBe(0)
+      expect(pool).not.toContain(token)
+    }
+  })
+
+  it('every ability text renders with no placeholder left at any level', () => {
+    for (const unit of units) {
+      if (!unit.ability) continue
+      for (const level of [1, 2, 3] as const) {
+        const text = describeAbility(unit.ability, level)
+        expect(text, `${unit.id} L${level}`).not.toMatch(/\{\w+\}/)
+      }
+    }
+    for (const food of Object.values(FOODS)) {
+      expect(describeFood(food), food.id).not.toMatch(/\{\w+\}/)
+    }
+  })
+
+  it('every target kind in the schema resolves without throwing', () => {
+    const state = newBattleState(teamFromSpec(['ant', 'sloth', 'pig'], 0), teamFromSpec(['duck', 'fish'], 1), 3)
+    const ctx = { side: 0 as const, source: '0-1-sloth', level: 1 as const, position: 1, atk: 1, triggerSource: '1-0-duck' }
+    for (const kind of TARGET_KINDS) {
+      const target = { kind, count: 1 } as Target
+      expect(() => resolveTarget(state, target, ctx, makeRng(1)), kind).not.toThrow()
+    }
   })
 
   it('rejects an invalid unit with a readable error', () => {

@@ -3,7 +3,8 @@ import type { BattleLog, BattleResult, BattleState, Side, Team, UnitInstance } f
 import type { ContentApi } from './content-types'
 import { makeRng } from './rng'
 import { cloneTeam, compact, front, positionOf, unitsOf } from './board'
-import { effectiveAtk, isDead } from './instance'
+import { effectiveAtk, effectiveHp, isDead } from './instance'
+import { type Incoming, isPoisonous, modifyIncoming, removeStatus } from './statuses'
 import { fire } from './triggers'
 import { drain } from './queue'
 import { killUnit } from './faint'
@@ -54,11 +55,17 @@ export function simulate(
     drain(state, rng, content)
     if (!alive(state, a) || !alive(state, b)) continue
 
-    const dmgToA = effectiveAtk(b)
-    const dmgToB = effectiveAtk(a)
+    const hitA = strike(b, a)
+    const hitB = strike(a, b)
+    const dmgToA = hitA.amount
+    const dmgToB = hitB.amount
     a.hp -= dmgToA
     b.hp -= dmgToB
     state.log.push({ t: 'attack', a: a.iid, b: b.iid, dmgToA, dmgToB })
+    // A shield that was used up is reported right after the attack that used it.
+    for (const [unit, hit] of [[a, hitA] as const, [b, hitB] as const]) {
+      if (hit.consumed) state.log.push({ t: 'status', unit: unit.iid, status: hit.consumed, applied: false })
+    }
     if (dmgToA > 0) state.log.push({ t: 'damage', unit: a.iid, amount: dmgToA, from: b.iid })
     if (dmgToB > 0) state.log.push({ t: 'damage', unit: b.iid, amount: dmgToB, from: a.iid })
 
@@ -81,6 +88,17 @@ export function simulate(
   }
   state.log.push({ t: 'end', result })
   return { seed, teams: start, events: state.log, result }
+}
+
+/**
+ * The damage one attacker lands on its target: raw attack, then the target's melon/garlic, then
+ * the attacker's peanut, which makes any hit that lands lethal (PLAN.md §1.6).
+ */
+function strike(attacker: UnitInstance, target: UnitInstance): Incoming {
+  const mod = modifyIncoming(target, effectiveAtk(attacker))
+  if (mod.consumed) removeStatus(target, mod.consumed)
+  if (mod.amount > 0 && isPoisonous(attacker)) return { ...mod, amount: Math.max(mod.amount, effectiveHp(target)) }
+  return mod
 }
 
 function compactBoth(state: BattleState): void {

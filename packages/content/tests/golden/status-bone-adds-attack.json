@@ -1,0 +1,102 @@
+{
+  "name": "status-bone-adds-attack",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "sloth:1/20:bone"
+  ],
+  "b": [
+    "sloth:1/20"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 6
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 6,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 6
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 6,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 6
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 6,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 6
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 6,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-sloth",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

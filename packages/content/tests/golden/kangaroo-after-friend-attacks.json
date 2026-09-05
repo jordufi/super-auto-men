@@ -1,0 +1,312 @@
+{
+  "name": "kangaroo-after-friend-attacks",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "sloth:1/9",
+    "kangaroo:1/9"
+  ],
+  "b": [
+    "sloth:1/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-kangaroo",
+      "trigger": "onFriendAheadAttacks"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-kangaroo",
+      "atk": 2,
+      "hp": 2,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-kangaroo",
+      "trigger": "onFriendAheadAttacks"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-kangaroo",
+      "atk": 2,
+      "hp": 2,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-kangaroo",
+      "trigger": "onFriendAheadAttacks"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-kangaroo",
+      "atk": 2,
+      "hp": 2,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-kangaroo",
+      "trigger": "onFriendAheadAttacks"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-kangaroo",
+      "atk": 2,
+      "hp": 2,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-kangaroo",
+      "trigger": "onFriendAheadAttacks"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-kangaroo",
+      "atk": 2,
+      "hp": 2,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-kangaroo",
+      "trigger": "onFriendAheadAttacks"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-kangaroo",
+      "atk": 2,
+      "hp": 2,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-kangaroo",
+      "trigger": "onFriendAheadAttacks"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-kangaroo",
+      "atk": 2,
+      "hp": 2,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-kangaroo",
+      "trigger": "onFriendAheadAttacks"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-kangaroo",
+      "atk": 2,
+      "hp": 2,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-kangaroo",
+      "trigger": "onFriendAheadAttacks"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-kangaroo",
+      "atk": 2,
+      "hp": 2,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 1
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 1,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-sloth",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-sloth",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

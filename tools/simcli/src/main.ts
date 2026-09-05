@@ -6,6 +6,7 @@ import { simulate } from '@sam/sim'
 import { CONTENT, teamFromString } from '@sam/content'
 import { formatBattle, namer } from './format'
 import { runScript } from './run-cli'
+import { formatList } from './list'
 
 function parseArgs(argv: string[]): { positional: string[]; flags: Record<string, string> } {
   const flags: Record<string, string> = {}
@@ -29,13 +30,18 @@ function parseArgs(argv: string[]): { positional: string[]; flags: Record<string
 
 const USAGE = `usage:
   npm run sim -- --seed <n> --turn <n> --a ant,cricket --b sloth:3/3
-  npm run sim -- run --seed <n> --script <file.json>`
+  npm run sim -- run --seed <n> --script <file.json>
+  npm run sim -- list`
 
 function main(): void {
   const { positional, flags } = parseArgs(process.argv.slice(2))
   const command = positional[0] ?? 'battle'
   if (flags['help']) {
     console.log(USAGE)
+    return
+  }
+  if (command === 'list') {
+    console.log(formatList())
     return
   }
   if (command === 'run') {

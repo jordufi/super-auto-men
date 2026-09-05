@@ -62,6 +62,7 @@ export function enqueueBatch(
         source: r.unit.iid,
         level: r.unit.level,
         position: r.position,
+        atk: effectiveAtk(r.unit),
         ...(r.triggerSource !== undefined ? { triggerSource: r.triggerSource } : {}),
       },
     })

@@ -54,6 +54,10 @@ export function resolveTarget(state: BattleState, target: Target, ctx: TriggerCt
     }
     case 'allFriends':
       return others
+    case 'friendsAhead':
+      return others.filter((f) => pos(f) < ctx.position).slice(-count(target.count, ctx)).reverse()
+    case 'friendsBehind':
+      return others.filter((f) => pos(f) > ctx.position).slice(0, count(target.count, ctx))
     case 'randomEnemy':
       return rng.shuffle(enemies).slice(0, count(target.count, ctx))
     case 'allEnemies':
@@ -66,6 +70,8 @@ export function resolveTarget(state: BattleState, target: Target, ctx: TriggerCt
       return best(enemies, effectiveHp)
     case 'lowestHpFriend':
       return best(others, effectiveHp)
+    case 'allUnits':
+      return [...friends, ...enemies]
   }
 }
 

@@ -1,0 +1,115 @@
+{
+  "name": "dodo-shares-attack",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "sloth:1/10",
+    "dodo:4/3"
+  ],
+  "b": [
+    "sloth:1/10"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "ability",
+      "source": "0-1-dodo",
+      "trigger": "onStartOfBattle"
+    },
+    {
+      "t": "buff",
+      "unit": "0-0-sloth",
+      "atk": 2,
+      "hp": 0,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 3
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 3,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 3
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 3,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 3
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 3,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-sloth",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 3
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-sloth",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 3,
+      "from": "0-0-sloth"
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-sloth",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

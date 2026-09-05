@@ -21,12 +21,15 @@ export type Target =
   | { kind: 'backFriend' }
   | { kind: 'randomFriend'; count: number | Lvl3; excludeSelf?: boolean | undefined }
   | { kind: 'allFriends' }
+  | { kind: 'friendsAhead'; count: number | Lvl3 }
+  | { kind: 'friendsBehind'; count: number | Lvl3 }
   | { kind: 'randomEnemy'; count: number | Lvl3 }
   | { kind: 'allEnemies' }
   | { kind: 'frontEnemy' }
   | { kind: 'highestAtkEnemy' }
   | { kind: 'lowestHpEnemy' }
   | { kind: 'lowestHpFriend' }
+  | { kind: 'allUnits' }
 
 export type Effect =
   | { kind: 'buff'; target: Target; atk: Lvl3; hp: Lvl3; temporary: boolean }
@@ -40,7 +43,7 @@ export type Effect =
     }
   | { kind: 'status'; target: Target; status: Status }
   | { kind: 'gold'; amount: Lvl3 }
-  | { kind: 'shop'; op: 'buffShopUnits'; atk: Lvl3; hp: Lvl3 }
+  | { kind: 'shop'; op: 'buffShopUnits' | 'buffShopUnitsPermanent'; atk: Lvl3; hp: Lvl3 }
   | { kind: 'sequence'; effects: Effect[] }
   | { kind: 'custom'; fn: string; args?: Record<string, unknown> | undefined }
 
@@ -74,6 +77,7 @@ export type CustomFn = (
   s: BattleState,
   ctx: TriggerCtx,
   rng: Rng,
+  content: ContentApi,
   args?: Record<string, unknown>,
 ) => BattleEvent[]
 

@@ -1,9 +1,12 @@
 // Text team specs, shared by the CLI, golden fixtures and bots.
 //   `ant`          base stats        `ant:3/2`   stat override
 //   `ant:3/2:L2`   stats and level   `ant:L3`    level only
-import type { Level, Side, Slots, Team } from '@sam/sim'
+//   `ant:garlic`   a held-item status (any of STATUSES), for status goldens
+import type { Level, Side, Slots, Status, Team } from '@sam/sim'
 import { emptySlots, makeInstance } from '@sam/sim'
 import { getUnit } from './registry'
+
+const STATUSES = ['meleeShield', 'garlic', 'bone', 'honey', 'poison'] as const
 
 export function teamFromSpec(specs: string[], side: Side, name = side === 0 ? 'A' : 'B'): Team {
   const slots: Slots = emptySlots()
@@ -15,6 +18,7 @@ export function teamFromSpec(specs: string[], side: Side, name = side === 0 ? 'A
     let atk = def.base.atk
     let hp = def.base.hp
     let level: Level | undefined
+    const statuses: Status[] = []
     for (const token of rest) {
       const stats = /^(\d+)\/(\d+)$/.exec(token)
       const lvl = /^L([123])$/.exec(token)
@@ -23,11 +27,15 @@ export function teamFromSpec(specs: string[], side: Side, name = side === 0 ? 'A
         hp = Number(stats[2])
       } else if (lvl) {
         level = Number(lvl[1]) as Level
+      } else if ((STATUSES as readonly string[]).includes(token)) {
+        statuses.push(token as Status)
       } else {
-        throw new Error(`bad token "${token}" in "${spec}"; expected atk/hp or L1-L3`)
+        throw new Error(`bad token "${token}" in "${spec}"; expected atk/hp, L1-L3 or a status`)
       }
     }
-    slots[i] = makeInstance({ defId: id, atk, hp, level }, `${side}-${i}-${id}`)
+    const unit = makeInstance({ defId: id, atk, hp, level }, `${side}-${i}-${id}`)
+    unit.statuses = statuses
+    slots[i] = unit
   })
   return { name, slots }
 }

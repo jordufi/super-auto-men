@@ -1,0 +1,116 @@
+{
+  "name": "flamingo-buffs-behind",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "flamingo:3/1",
+    "sloth",
+    "sloth"
+  ],
+  "b": [
+    "pig:9/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-flamingo",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 3
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-flamingo",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 3,
+      "from": "0-0-flamingo"
+    },
+    {
+      "t": "faint",
+      "unit": "0-0-flamingo",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-flamingo",
+      "trigger": "onFaint"
+    },
+    {
+      "t": "buff",
+      "unit": "0-1-sloth",
+      "atk": 1,
+      "hp": 1,
+      "temporary": false
+    },
+    {
+      "t": "buff",
+      "unit": "0-2-sloth",
+      "atk": 1,
+      "hp": 1,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-1-sloth",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-1-sloth",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 2,
+      "from": "0-1-sloth"
+    },
+    {
+      "t": "faint",
+      "unit": "0-1-sloth",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "attack",
+      "a": "0-2-sloth",
+      "b": "1-0-pig",
+      "dmgToA": 9,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-2-sloth",
+      "amount": 9,
+      "from": "1-0-pig"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-pig",
+      "amount": 2,
+      "from": "0-2-sloth"
+    },
+    {
+      "t": "faint",
+      "unit": "0-2-sloth",
+      "side": 0,
+      "position": 0
+    },
+    {
+      "t": "end",
+      "result": "b"
+    }
+  ]
+}

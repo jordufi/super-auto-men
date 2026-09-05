@@ -1,0 +1,119 @@
+{
+  "name": "peacock-gains-attack",
+  "seed": 42,
+  "turn": 5,
+  "a": [
+    "peacock:2/9"
+  ],
+  "b": [
+    "sloth:1/9"
+  ],
+  "expectedEvents": [
+    {
+      "t": "startOfBattle"
+    },
+    {
+      "t": "attack",
+      "a": "0-0-peacock",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 2
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-peacock",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 2,
+      "from": "0-0-peacock"
+    },
+    {
+      "t": "ability",
+      "source": "0-0-peacock",
+      "trigger": "onHurt"
+    },
+    {
+      "t": "buff",
+      "unit": "0-0-peacock",
+      "atk": 2,
+      "hp": 0,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-peacock",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 4
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-peacock",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 4,
+      "from": "0-0-peacock"
+    },
+    {
+      "t": "ability",
+      "source": "0-0-peacock",
+      "trigger": "onHurt"
+    },
+    {
+      "t": "buff",
+      "unit": "0-0-peacock",
+      "atk": 2,
+      "hp": 0,
+      "temporary": false
+    },
+    {
+      "t": "attack",
+      "a": "0-0-peacock",
+      "b": "1-0-sloth",
+      "dmgToA": 1,
+      "dmgToB": 6
+    },
+    {
+      "t": "damage",
+      "unit": "0-0-peacock",
+      "amount": 1,
+      "from": "1-0-sloth"
+    },
+    {
+      "t": "damage",
+      "unit": "1-0-sloth",
+      "amount": 6,
+      "from": "0-0-peacock"
+    },
+    {
+      "t": "faint",
+      "unit": "1-0-sloth",
+      "side": 1,
+      "position": 0
+    },
+    {
+      "t": "ability",
+      "source": "0-0-peacock",
+      "trigger": "onHurt"
+    },
+    {
+      "t": "buff",
+      "unit": "0-0-peacock",
+      "atk": 2,
+      "hp": 0,
+      "temporary": false
+    },
+    {
+      "t": "end",
+      "result": "a"
+    }
+  ]
+}

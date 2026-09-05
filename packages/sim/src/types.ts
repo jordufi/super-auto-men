@@ -64,6 +64,7 @@ export interface TriggerCtx {
   level: Level // its level
   triggerSource?: InstanceId // e.g. the unit that was summoned / fainted / bought
   position: number // board index of `source` when the trigger was queued
+  atk: number // its effective attack when the trigger was queued (a fainted unit is off the board)
 }
 
 export interface PendingTrigger {
@@ -94,6 +95,9 @@ export type BattleEvent =
 export interface ShopCtx {
   gold: number
   shop: ShopSlot[]
+  /** Canned food: added to every unit slot rolled from now on. */
+  buff?: { atk: number; hp: number } | undefined
+  lastResult?: BattleResult | undefined
 }
 
 export interface BattleState {
@@ -125,6 +129,8 @@ export interface ShopState {
   team: Slots
   shop: ShopSlot[] // units first, then foods
   nextIid: number
+  /** Permanent shop buff from canned food. Applied to every unit slot on every roll. */
+  shopBuff?: { atk: number; hp: number } | undefined
   phase: RunPhase
   lastResult?: BattleResult | undefined
 }

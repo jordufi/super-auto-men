@@ -1,1 +1,9 @@
+// One export line per food. The registry validates everything exported here.
 export { apple } from './apple'
+export { cannedFood } from './cannedFood'
+export { cupcake } from './cupcake'
+export { garlic } from './garlic'
+export { honey } from './honey'
+export { meatBone } from './meatBone'
+export { melon } from './melon'
+export { saladBowl } from './saladBowl'

@@ -1,6 +1,7 @@
 import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
 
 /** Globals and imports that would make the sim/content non-deterministic or impure (ARCHITECTURE.md P1, P2). */
 const pureRules = {
@@ -43,7 +44,8 @@ export default tseslint.config(
           patterns: [
             {
               regex: '^[^.]',
-              message: 'sim must not import any package (ARCHITECTURE.md §3). Use relative imports only.',
+              message:
+                'sim must not import any package (ARCHITECTURE.md §3). Use relative imports only.',
             },
           ],
         },
@@ -61,6 +63,46 @@ export default tseslint.config(
             {
               group: ['@sam/*'],
               message: 'sim tests import sim via relative paths.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // React rules for the app package only.
+    files: ['packages/app/**/*.tsx'],
+    extends: [reactHooks.configs.flat.recommended],
+  },
+  {
+    // Only runStore may call sim mutators; everything else in the app reads state from the stores
+    // (PLAN.md Phase 7 "Done when"). Type-only imports are fine anywhere.
+    files: ['packages/app/src/**/*.{ts,tsx}'],
+    ignores: ['packages/app/src/store/runStore.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@sam/sim',
+              importNames: [
+                'shopReducer',
+                'startTurn',
+                'simulate',
+                'startRun',
+                'applyAction',
+                'endTurnAndBattle',
+                'replayRun',
+                'apply',
+                'summonUnit',
+                'killUnit',
+                'dealDamage',
+                'fire',
+                'drain',
+              ],
+              message: 'Gameplay state changes only through store/runStore.ts (CLAUDE.md).',
+              allowTypeImports: true,
             },
           ],
         },

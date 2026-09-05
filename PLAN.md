@@ -614,6 +614,11 @@ packages/app/src/styles/global.css
 - [ ] Stage scaling works on desktop and phone.
 - [ ] `runStore` is the only module importing sim mutators (add an ESLint `no-restricted-imports` rule for `@sam/sim` in `packages/app/src/**` except `store/runStore.ts`).
 
+**As built (Phase 7)**
+- Sprites are **copied** into `packages/app/src/assets/units/`, not moved: `spike/index.html` still serves `/sprites/` and that folder stays the owner's raw art drop. `ant` is still a `.jpg` (owner to re-export as a transparent PNG); `SPRITES` accepts `.png` and `.jpg`.
+- The ESLint rule restricts the *mutator export names* of `@sam/sim` (`shopReducer`, `simulate`, `applyAction`, ...) with `allowTypeImports: true`, rather than the whole package: components legitimately need sim **types**. It is `@typescript-eslint/no-restricted-imports`, the variant that understands type imports.
+- `RunEndScreen` (`data-testid="run-end"`, `back-to-menu`) was added so a finished run returns to the menu.
+
 ---
 
 ## Phase 8 — Shop screen, click-based
@@ -655,6 +660,12 @@ packages/app/src/components/AbilityTooltip.tsx # shows ability text with level n
 - [ ] All `data-testid`s above exist.
 - [ ] A full 10-turn run can be completed by clicking (with text-only battles).
 
+**As built (Phase 8)**
+- Taps and drags share **one** gesture path: `useDrag` (Phase 9) reports a press that moved < 6 logical px as a tap, so nothing from this phase had to be rewritten in Phase 9. The tap rules themselves are pure and live in `src/store/interaction.ts` (`resolveTap`), tested in `tests/interaction.test.ts`.
+- The team is drawn **front-first on the right** (`flex-direction: row-reverse`), so slot 0 faces the enemy. Slot testids stay `team-slot-{i}` by index, not by screen position.
+- Refused actions are detected in `runStore` by state identity (the reducer returns the same object) and counted in `refused`; `GoldCounter` uses that counter as its React key so the CSS shake replays with no timer and no effect.
+- Team cards keep the `unit-{iid}` testid; shop cards are `shop-card-{i}` inside the `shop-slot-{i}` drop zones.
+
 ---
 
 ## Phase 9 — Drag and drop
@@ -688,6 +699,11 @@ packages/app/tests/hitTest.test.ts
 - [ ] Every drop rule works on desktop and phone.
 - [ ] Taps from Phase 8 still work.
 - [ ] `shop-dnd.spec.ts` passes locally (`npx playwright test`).
+
+**As built (Phase 9)**
+- Playwright lives in the app package: `packages/app/playwright.config.ts` and `packages/app/e2e/shop-dnd.spec.ts`, run with `npm run test:e2e` from the root. The config starts the dev server on port 5174 itself. Phase 11 wires it into CI from there.
+- Drop zones are marked in the DOM with `data-drop-kind` / `data-drop-index` and collected once at drag start (`collectZones`), so all the geometry stays in one pure module (`dnd/hitTest.ts`), with `toStage` handling the stage scale.
+- The fourth E2E case asserts that a plain click still buys: the regression guard for the shared tap/drag gesture.
 
 ---
 

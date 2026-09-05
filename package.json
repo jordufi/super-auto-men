@@ -15,8 +15,11 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "npm run test:e2e -w @sam/app",
     "format": "prettier --write .",
     "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev -w @sam/app",
+    "preview": "npm run preview -w @sam/app",
     "sim": "tsx tools/simcli/src/main.ts",
     "test:update-golden": "cross-env UPDATE_GOLDEN=1 vitest run --project @sam/content golden"
   },

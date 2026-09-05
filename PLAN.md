@@ -105,7 +105,8 @@ The implementer should not have to look anything up. Everything needed for M0–
 ### 1.4 Levels, exp, merging
 
 - `exp` runs 0–5. Level 1 = exp 0–1, level 2 = exp 2–4, level 3 = exp 5. `level` is derived from `exp`; store both but always recompute `level` from `exp` in one helper `levelFromExp(exp)`.
-- **Merge** (buy same defId onto a unit, or drag same defId onto a unit): the surviving unit gets `exp = min(5, exp1 + exp2 + 1)`, `atk = max(atk1, atk2) + 1`, `hp = max(hp1, hp2) + 1`. It keeps the perk of the unit that was **already on the board**. If the merge crosses a level threshold, fire `onLevelUp` on the unit and add one random unit of `min(6, currentMaxTier + 1)` to the shop in a new temporary slot (the SAP "level-up bonus pet").
+- **Merge** (buy same defId onto a unit, or drag same defId onto a unit): the surviving unit gets `exp = min(5, exp1 + exp2 + 1)`, `atk = max(atk1, atk2) + 1`, `hp = max(hp1, hp2) + 1`. If the merge crosses a level threshold, fire `onLevelUp` on the unit and add one random unit of `min(6, currentMaxTier + 1)` to the shop in a new temporary slot (the SAP "level-up bonus pet").
+- **Merging never destroys a held item.** The survivor keeps its own statuses and **inherits any status the other unit held that it does not already have** (order: its own first, then the inherited ones). A shop unit carries no statuses, so for a buy-merge this is exactly "keeps its own perk"; it matters only for a drag-merge, where both units are on the board and the older wording ("keeps the perk of the unit already on the board") did not say which one wins. Locked by `shop.test.ts` / `shop-abilities.test.ts`.
 - Level 3 units cannot gain more exp; buying a same-defId onto a level 3 unit is refused (action is a no-op and returns `state` unchanged with no events).
 
 ### 1.5 Trigger ordering (a game rule, locked by golden tests)

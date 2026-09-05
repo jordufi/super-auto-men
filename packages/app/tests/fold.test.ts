@@ -47,6 +47,17 @@ describe('boardAt', () => {
     expect(after.sides[0].map((u) => u.defId)).toEqual(['zombieCricket'])
   })
 
+  it('a summon lands in its own slot when faints left holes in front of a survivor', () => {
+    // The hedgehog faints, its blast kills both 1hp friends, and honey summons a bee into the
+    // slot the honeyed unit left (index 2) while the ox is still at index 3. The bee belongs in
+    // FRONT of the ox: a dense fold would append it behind and animate the wrong attacker.
+    const log = run('hedgehog:1/1,sloth:1/1,sloth:1/1:honey,ox:5/50', 'sloth:5/50', 7)
+    const summonAt = log.events.findIndex((e) => e.t === 'summon')
+    expect(summonAt).toBeGreaterThan(0)
+    const after = boardAt(log, summonAt + 1)
+    expect(after.sides[0].map((u) => u.defId)).toEqual(['bee', 'ox'])
+  })
+
   it('buffs change the numbers the screen shows', () => {
     const log = run('ant,sloth', 'pig:9/9') // ant faints and buffs a random friend
     const buffAt = log.events.findIndex((e) => e.t === 'buff')

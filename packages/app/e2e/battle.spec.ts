@@ -29,3 +29,20 @@ test('a battle played from the shop replays on the battle screen', async ({ page
   await expect(page.getByTestId('battle-screen')).toBeVisible()
   await expect(page.getByTestId('battle-result')).toBeVisible()
 })
+
+test('the top bar shows the pre-battle run while the fight replays, not the outcome', async ({ page }) => {
+  // `endTurnAndBattle` advances the run before the log is played, so the screen must render the
+  // snapshot taken before the result landed or it spoils the fight it is replaying.
+  await page.goto('/?seed=42&speed=1')
+  await page.getByTestId('shop-slot-0').click()
+  await page.getByTestId('team-slot-0').click()
+  await page.getByTestId('end-turn').click()
+  await expect(page.getByTestId('battle-screen')).toBeVisible()
+  await expect(page.getByTestId('turn')).toHaveText('1')
+  await expect(page.getByTestId('trophies')).toHaveText('0/10')
+  await expect(page.getByTestId('lives')).toHaveText('5')
+
+  // Only once the result overlay is up does the run's new standing appear.
+  await page.getByTestId('skip').click()
+  await expect(page.getByTestId('battle-result')).toBeVisible()
+})

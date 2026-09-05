@@ -49,6 +49,7 @@ export function TeamBoard({
               hp={unit.hp + unit.tmpHp}
               level={unit.level}
               exp={unit.exp}
+              statuses={unit.statuses}
               selected={selected === slot}
               ghost={dragging === slot}
               testId={`unit-${unit.iid}`}

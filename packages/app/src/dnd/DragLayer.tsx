@@ -21,6 +21,7 @@ export function DragLayer({ team, shop }: { team: Slots; shop: readonly ShopSlot
           hp={u.hp + u.tmpHp}
           level={u.level}
           exp={u.exp}
+          statuses={u.statuses}
         />
       )
   } else {

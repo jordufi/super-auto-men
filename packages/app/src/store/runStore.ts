@@ -1,7 +1,7 @@
 // The ONLY module allowed to call sim mutators (PLAN.md Phase 7, CLAUDE.md project conventions).
 // Everything the UI does to the game goes through `dispatch` / `endTurn`.
 import { create } from 'zustand'
-import type { BattleEvent, BattleLog, ShopAction, ShopState } from '@sam/sim'
+import type { BattleEvent, BattleLog, ShopAction, ShopState, TurnSnapshot } from '@sam/sim'
 import { type RunState, applyAction, endTurnAndBattle, makeRng, replayRun, startRun } from '@sam/sim'
 import { CONTENT } from '@sam/content'
 import { LocalBots, type OpponentSource } from '../net/opponents'
@@ -16,6 +16,9 @@ export interface RunStore {
   /** Bumped whenever the reducer refused an action, so the UI can flash the gold counter. */
   refused: number
   lastBattle: BattleLog | null
+  /** The run as it stood when `lastBattle` was fought. The battle screen shows this, not `state`,
+   *  so replaying the log does not spoil its own result. */
+  battleSnapshot: TurnSnapshot | null
   opponents: OpponentSource
   startRun: (seed: number) => void
   continueRun: () => boolean
@@ -37,13 +40,14 @@ export const useRunStore = create<RunStore>((set, get) => ({
   events: [],
   refused: 0,
   lastBattle: null,
+  battleSnapshot: null,
   opponents: LocalBots,
 
   startRun: (seed) => {
     const run = startRun(seed, CONTENT)
     clearRun()
     persist(run)
-    set({ run, state: run.state, events: [], lastBattle: null, refused: 0 })
+    set({ run, state: run.state, events: [], lastBattle: null, battleSnapshot: null, refused: 0 })
   },
 
   /** Rebuilds a saved run by replaying it. Returns false if there is nothing to continue. */
@@ -52,7 +56,8 @@ export const useRunStore = create<RunStore>((set, get) => ({
     if (!saved) return false
     try {
       const run = replayRun(saved.seed, saved.actions, saved.opponents, CONTENT)
-      set({ run, state: run.state, events: [], lastBattle: run.lastBattle ?? null, refused: 0 })
+      // A replayed run resumes in the shop, so there is no battle to show a snapshot for.
+      set({ run, state: run.state, events: [], lastBattle: run.lastBattle ?? null, battleSnapshot: null, refused: 0 })
       return true
     } catch {
       clearRun() // a save the current rules can no longer replay is not worth keeping
@@ -84,12 +89,13 @@ export const useRunStore = create<RunStore>((set, get) => ({
       state: run.state,
       events: [...result.endEvents, ...result.startEvents],
       lastBattle: result.log,
+      battleSnapshot: result.before,
     })
   },
 
   reset: () => {
     clearRun()
-    set({ run: null, state: null, events: [], lastBattle: null, refused: 0 })
+    set({ run: null, state: null, events: [], lastBattle: null, battleSnapshot: null, refused: 0 })
   },
 }))
 

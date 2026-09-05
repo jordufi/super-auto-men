@@ -50,3 +50,25 @@ test('a tap still selects and buys (Phase 8 behaviour survives)', async ({ page 
   await expect(unitIn(page, 2)).toBeVisible()
   await expect(page.getByTestId('gold')).toContainText('7')
 })
+
+test('a unit that ate a food shows the item it is holding', async ({ page }) => {
+  // Seed 1 puts honey in the turn-1 shop. Find it by defId, not by index: buying splices the
+  // shop, so every slot after the bought one renumbers.
+  await page.goto('/?seed=1')
+  const honey = page
+    .locator('[data-testid^="shop-slot-"]')
+    .filter({ has: page.locator('[data-defid="honey"]') })
+  await expect(honey).toHaveCount(1)
+
+  await page.getByTestId('shop-slot-0').click()
+  await page.getByTestId('team-slot-0').click()
+  await expect(unitIn(page, 0)).toBeVisible()
+  await expect(page.getByTestId('team-slot-0').getByTestId('statuses')).toHaveCount(0)
+
+  await honey.click()
+  await page.getByTestId('team-slot-0').click()
+  await expect(page.getByTestId('team-slot-0').getByTestId('statuses')).toHaveAttribute(
+    'data-statuses',
+    'honey',
+  )
+})

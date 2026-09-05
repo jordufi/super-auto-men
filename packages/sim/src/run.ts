@@ -41,10 +41,24 @@ export function applyAction(run: RunState, action: ShopAction, content: ContentA
   return r.events
 }
 
+/** The run as it stood when the battle was fought, before the result was applied. */
+export interface TurnSnapshot {
+  turn: number
+  gold: number
+  lives: number
+  trophies: number
+}
+
 export interface TurnResult {
   endEvents: BattleEvent[] // from onEndOfTurn abilities
   log: BattleLog
   startEvents: BattleEvent[] // from the next turn's onStartOfTurn abilities (empty if the run ended)
+  /**
+   * Lives/trophies/turn BEFORE this battle's result was applied. `endTurnAndBattle` advances the
+   * run to the next shop turn immediately, so anything replaying the log (the battle screen) must
+   * show this instead of the current state or it spoils the result.
+   */
+  before: TurnSnapshot
 }
 
 export function endTurnAndBattle(run: RunState, opponent: Team, content: ContentApi): TurnResult | null {
@@ -52,6 +66,7 @@ export function endTurnAndBattle(run: RunState, opponent: Team, content: Content
   const ended = shopReducer(run.state, { t: 'endTurn' }, run.rng, content)
   run.actions.push({ t: 'endTurn' })
   const s = ended.state
+  const before: TurnSnapshot = { turn: s.turn, gold: s.gold, lives: s.lives, trophies: s.trophies }
   const log = simulate({ name: 'You', slots: s.team }, opponent, battleSeed(run.seed, s.turn), s.turn, content)
   run.lastBattle = log
   run.opponents.push(opponent)
@@ -62,15 +77,15 @@ export function endTurnAndBattle(run: RunState, opponent: Team, content: Content
 
   if (next.trophies >= WIN_TROPHIES) {
     run.state = { ...next, phase: 'won' }
-    return { endEvents: ended.events, log, startEvents: [] }
+    return { endEvents: ended.events, log, startEvents: [], before }
   }
   if (next.lives <= 0) {
     run.state = { ...next, phase: 'lost' }
-    return { endEvents: ended.events, log, startEvents: [] }
+    return { endEvents: ended.events, log, startEvents: [], before }
   }
   const started = startTurn({ ...next, turn: next.turn + 1 }, run.rng, content)
   run.state = started.state
-  return { endEvents: ended.events, log, startEvents: started.events }
+  return { endEvents: ended.events, log, startEvents: started.events, before }
 }
 
 /** Re-folds a run from scratch. The result must equal the incrementally played run. */

@@ -99,6 +99,20 @@ describe('run', () => {
     expect(a.state.gold).toBe(b.state.gold)
   })
 
+  it('TurnResult.before holds the pre-battle run, so a replay cannot spoil its own result', () => {
+    const r = startRun(1, content)
+    applyAction(r, { t: 'buyUnit', shopIndex: 0, slot: 0 }, content)
+    const win = endTurnAndBattle(r, empty, content)!
+    expect(win.log.result).toBe('a')
+    expect(win.before).toEqual({ turn: 1, gold: 7, lives: 5, trophies: 0 })
+    expect(r.state).toMatchObject({ turn: 2, trophies: 1 }) // the run has already moved on
+
+    const loss = endTurnAndBattle(r, strong, content)!
+    expect(loss.log.result).toBe('b')
+    expect(loss.before).toMatchObject({ turn: 2, lives: 5, trophies: 1 })
+    expect(r.state).toMatchObject({ turn: 3, lives: 4 })
+  })
+
   it('temporary buffs are cleared for the next shop phase', () => {
     const r = startRun(5, content)
     applyAction(r, { t: 'buyUnit', shopIndex: 0, slot: 0 }, content)

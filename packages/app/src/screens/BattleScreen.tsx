@@ -16,6 +16,9 @@ const RESULT_TEXT = { a: 'Victory', b: 'Defeat', draw: 'Draw' } as const
 export function BattleScreen(): ReactNode {
   const log = useRunStore((s) => s.lastBattle)
   const state = useRunStore((s) => s.state)
+  // `endTurnAndBattle` already advanced the run to the next shop turn, so `state` holds the
+  // post-battle lives and trophies. Showing it here would spoil the fight being replayed.
+  const snapshot = useRunStore((s) => s.battleSnapshot)
   const speed = useUiStore((s) => s.speed)
   const setSpeed = useUiStore((s) => s.setSpeed)
   const setScreen = useUiStore((s) => s.setScreen)
@@ -29,6 +32,7 @@ export function BattleScreen(): ReactNode {
   const units = useMemo(() => (log ? unitIndex(log) : new Map<string, { defId: string; level: Level }>()), [log])
 
   if (!log || !board || !state) return null
+  const shownRun = snapshot ?? state
 
   const head = group[0]
   const abilitySource = head?.t === 'ability' ? head.source : null
@@ -41,7 +45,7 @@ export function BattleScreen(): ReactNode {
 
   return (
     <div data-testid="battle-screen" style={{ position: 'absolute', inset: 0 }}>
-      <TopBar turn={state.turn} lives={state.lives} trophies={state.trophies} gold={state.gold} />
+      <TopBar turn={shownRun.turn} lives={shownRun.lives} trophies={shownRun.trophies} gold={shownRun.gold} />
 
       <div style={{ position: 'absolute', top: 230, left: 0, right: 0 }}>
         <BattleBoard
@@ -82,6 +86,7 @@ export function BattleScreen(): ReactNode {
           <div data-testid="battle-result" style={{ fontSize: 52, fontWeight: 800 }}>
             {RESULT_TEXT[log.result]}
           </div>
+          {/* The result overlay is the moment the outcome lands, so it shows the CURRENT run. */}
           <div style={{ color: 'var(--muted)' }}>
             Trophies {state.trophies} &middot; Lives {state.lives} &middot; battle seed {log.seed}
           </div>

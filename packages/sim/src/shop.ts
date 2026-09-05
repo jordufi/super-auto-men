@@ -1,7 +1,7 @@
 // The shop reducer (ARCHITECTURE.md §4.6, PLAN.md §1.2, §1.4). Pure: returns a new state, or the
 // SAME state object (and no events) for any action the player is allowed to attempt but that is
 // not possible right now (not enough gold, wrong slot, ...).
-import type { BattleEvent, BattleState, ShopAction, ShopSlot, ShopState, Slots, TriggerCtx, UnitInstance } from './types'
+import type { BattleEvent, BattleState, ShopAction, ShopSlot, ShopState, Slots, Status, TriggerCtx, UnitInstance } from './types'
 import type { ContentApi } from './content-types'
 import type { Rng } from './rng'
 import { SLOT_COUNT, cloneUnit, emptySlots } from './board'
@@ -184,13 +184,23 @@ function reorder(s: ShopState, from: number, to: number, rng: Rng, content: Cont
 
 // ---- helpers ----
 
-/** PLAN.md §1.4. Returns true if the merge crossed a level threshold. */
-function mergeInto(target: UnitInstance, incoming: { atk: number; hp: number; exp: number }): boolean {
+/**
+ * PLAN.md §1.4. Returns true if the merge crossed a level threshold. The survivor keeps its own
+ * statuses and inherits any the other unit held that it lacks, so a merge never destroys a held
+ * item. A shop slot carries no statuses, so this only bites on a drag-merge.
+ */
+function mergeInto(
+  target: UnitInstance,
+  incoming: { atk: number; hp: number; exp: number; statuses?: readonly Status[] },
+): boolean {
   const before = target.level
   target.exp = Math.min(MAX_EXP, target.exp + incoming.exp + 1)
   target.atk = Math.max(target.atk, incoming.atk) + 1
   target.hp = Math.max(target.hp, incoming.hp) + 1
   target.level = levelFromExp(target.exp)
+  for (const s of incoming.statuses ?? []) {
+    if (!target.statuses.includes(s)) target.statuses.push(s)
+  }
   return target.level > before
 }
 

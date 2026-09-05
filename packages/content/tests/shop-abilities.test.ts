@@ -25,6 +25,14 @@ describe('shop-phase abilities', () => {
     expect(after.team[1]).toMatchObject({ defId: 'crab', hp: 5 }) // 50% of 9, rounded
   })
 
+  it('crab never lowers its own health when the healthiest friend is weaker', () => {
+    // 50% of a 2 hp friend is 1, which is less than the crab's own 3 hp: copying is not a downgrade.
+    const s = state([U('crab')], [['fish', 2, 2]])
+    const r = act(s, { t: 'buyUnit', shopIndex: 0, slot: 1 })
+    expect(r.state.team[1]).toMatchObject({ defId: 'crab', hp: 3 })
+    expect(r.events.filter((e) => e.t === 'buff')).toEqual([])
+  })
+
   it('shrimp gives a friend health when sold', () => {
     const s = state([], [['shrimp', 2, 3], ['sloth', 1, 1]])
     const after = act(s, { t: 'sell', slot: 0 }).state

@@ -146,6 +146,23 @@ describe('shopReducer', () => {
     expect(units[3]).toMatchObject({ defId: 'big' }) // tier 2 bonus
   })
 
+  it('merging never destroys a held item: the survivor inherits what it lacks (PLAN.md 1.4)', () => {
+    const two = state({ units: [['sloth', 1, 1], ['sloth', 1, 1]] })
+    two.team[0]!.statuses = ['garlic']
+    two.team[1]!.statuses = ['meleeShield', 'garlic']
+    const merged = act(two, { t: 'reorder', from: 1, to: 0 }).state
+    // Its own first, then the ones it did not already hold; no duplicates.
+    expect(merged.team[0]!.statuses).toEqual(['garlic', 'meleeShield'])
+    expect(merged.team[1]).toBeNull()
+  })
+
+  it('a buy-merge leaves the buyer’s own statuses alone (a shop slot holds none)', () => {
+    const s0 = state({ units: [['sloth', 1, 1]] })
+    s0.team[0]!.statuses = ['honey']
+    const merged = act(s0, { t: 'buyUnit', shopIndex: 0, slot: 0 }).state
+    expect(merged.team[0]!.statuses).toEqual(['honey'])
+  })
+
   it('a level-3 unit cannot absorb more copies', () => {
     const before = state({ units: [['sloth', 5, 5, 5]] })
     expect(before.team[0]!.level).toBe(3)

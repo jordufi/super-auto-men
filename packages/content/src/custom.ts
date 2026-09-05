@@ -44,7 +44,10 @@ function buff(s: BattleState, unit: UnitInstance, atk: number, hp: number): Batt
   return { t: 'buff', unit: unit.iid, atk, hp, temporary: false }
 }
 
-/** Crab: take a share of the healthiest friend's health. */
+/**
+ * Crab: take a share of the healthiest friend's health. Copying is never a downgrade — a share
+ * smaller than what the crab already has leaves it alone (PLAN.md §1.4).
+ */
 const copyHighestHp: CustomFn = (s, ctx, _rng, _content, args) => {
   const me = self(s, ctx)
   if (!me) return []
@@ -52,7 +55,7 @@ const copyHighestHp: CustomFn = (s, ctx, _rng, _content, args) => {
   if (best <= 0) return []
   const target = Math.round((best * lvlAt(args, 'percent', ctx, 100)) / 100)
   const delta = target - effectiveHp(me)
-  return delta === 0 ? [] : [buff(s, me, 0, delta)]
+  return delta <= 0 ? [] : [buff(s, me, 0, delta)]
 }
 
 /** Dodo: hand a share of its attack to the friend in front. */

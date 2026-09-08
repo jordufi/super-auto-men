@@ -29,7 +29,7 @@ export interface UiStore {
 
 export const useUiStore = create<UiStore>((set) => ({
   screen: 'menu',
-  speed: 1,
+  speed: 'manual',
   selected: null,
   drag: null,
   setScreen: (screen) => set({ screen, selected: null }),

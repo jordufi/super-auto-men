@@ -1,7 +1,8 @@
 // Dev/E2E entry points: /?seed=42&screen=shop&speed=2 boots straight into a deterministic run.
 // Never enabled in a plain production build (ARCHITECTURE.md §12, PLAN.md Phase 7).
 export type Screen = 'menu' | 'shop' | 'battle' | 'runEnd'
-export type Speed = 1 | 2 | 'instant'
+/** 'manual' advances only when the player taps Next; it is the default (uiStore). */
+export type Speed = 'manual' | 1 | 2 | 'instant'
 
 export interface UrlParams {
   seed?: number
@@ -28,7 +29,7 @@ export function parseParams(search: string): UrlParams {
 
   const speed = q.get('speed')
   if (speed === '1' || speed === '2') out.speed = Number(speed) as 1 | 2
-  else if (speed === 'instant') out.speed = 'instant'
+  else if (speed === 'instant' || speed === 'manual') out.speed = speed
 
   if (q.get('offline') === '1') out.offline = true
   return out

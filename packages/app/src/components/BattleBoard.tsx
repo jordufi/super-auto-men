@@ -1,9 +1,12 @@
 // Renders one folded board state. Everything it shows comes from the log; nothing is computed.
-import type { ReactNode } from 'react'
+import { type ReactNode, useRef } from 'react'
 import type { UnitInstance } from '@sam/sim'
 import type { FoldedBoard, Popup as PopupData } from '../replay/fold'
 import { UnitSprite } from './UnitSprite'
 import { Popup } from './Popup'
+import { StatBadges } from './StatBadges'
+import { Projectiles } from './Projectiles'
+import type { Projectile } from '../replay/projectiles'
 
 export interface BattleBoardProps {
   board: FoldedBoard
@@ -15,6 +18,9 @@ export interface BattleBoardProps {
   /** The unit that is fainting right now: still drawn, fading out. */
   fainting: string | null
   popups: PopupData[]
+  /** Objects thrown between units for this step, and the step they belong to. */
+  projectiles: readonly Projectile[]
+  stepKey: number
 }
 
 function classFor(iid: string, p: BattleBoardProps): string {
@@ -27,27 +33,48 @@ function classFor(iid: string, p: BattleBoardProps): string {
   return parts.join(' ')
 }
 
-function Unit({ unit, side, props }: { unit: UnitInstance; side: 0 | 1; props: BattleBoardProps }): ReactNode {
+function Unit({
+  unit,
+  side,
+  props,
+}: {
+  unit: UnitInstance
+  side: 0 | 1
+  props: BattleBoardProps
+}): ReactNode {
   const popups = props.popups.filter((p) => p.iid === unit.iid)
   return (
     <div
       data-testid={`battle-unit-${unit.iid}`}
       data-side={side}
       className={classFor(unit.iid, props)}
-      style={{ position: 'relative', width: 130, textAlign: 'center' }}
+      style={{
+        position: 'relative',
+        width: 130,
+        height: 160,
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        gap: 6,
+      }}
     >
       {popups.map((p, i) => (
         <Popup key={i} popup={p} />
       ))}
-      <div style={{ transform: side === 1 ? 'scaleX(-1)' : undefined }}>
+      <div className="slab" />
+      <div
+        className="unit-sprite-wrap"
+        style={{ transform: side === 1 ? 'scaleX(-1)' : undefined }}
+      >
         <UnitSprite defId={unit.defId} size={96} />
       </div>
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'center', fontWeight: 800, fontSize: 18 }}>
-        <span style={{ color: 'var(--atk)' }}>{unit.atk + unit.tmpAtk}</span>
-        <span style={{ color: 'var(--hp)' }}>{unit.hp + unit.tmpHp}</span>
-      </div>
+      <StatBadges atk={unit.atk + unit.tmpAtk} hp={unit.hp + unit.tmpHp} size={36} />
       {unit.statuses.length > 0 && (
-        <div style={{ fontSize: 12, color: '#7fd7ff' }}>{unit.statuses.join(' ')}</div>
+        <div className="banner" style={{ fontSize: 12, padding: '2px 8px' }}>
+          {unit.statuses.join(' ')}
+        </div>
       )}
     </div>
   )
@@ -55,10 +82,30 @@ function Unit({ unit, side, props }: { unit: UnitInstance; side: 0 | 1; props: B
 
 export function BattleBoard(props: BattleBoardProps): ReactNode {
   const { board } = props
+  // Projectiles are positioned against this element, so it has to be the positioned ancestor.
+  const rootRef = useRef<HTMLDivElement>(null)
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 60 }}>
+    <div
+      ref={rootRef}
+      style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 60,
+      }}
+    >
       {/* Side 0 faces right: front unit closest to the middle. */}
-      <div data-testid="side-0" style={{ display: 'flex', flexDirection: 'row-reverse', gap: 10, minWidth: 480, justifyContent: 'flex-start' }}>
+      <div
+        data-testid="side-0"
+        style={{
+          display: 'flex',
+          flexDirection: 'row-reverse',
+          gap: 10,
+          minWidth: 480,
+          justifyContent: 'flex-start',
+        }}
+      >
         {board.sides[0].map((u) => (
           <Unit key={u.iid} unit={u} side={0} props={props} />
         ))}
@@ -69,6 +116,7 @@ export function BattleBoard(props: BattleBoardProps): ReactNode {
           <Unit key={u.iid} unit={u} side={1} props={props} />
         ))}
       </div>
+      <Projectiles items={props.projectiles} boardRef={rootRef} stepKey={props.stepKey} />
     </div>
   )
 }

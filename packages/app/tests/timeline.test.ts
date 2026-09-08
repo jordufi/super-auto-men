@@ -44,6 +44,19 @@ describe('buildTimeline', () => {
     expect(totalDuration(buildTimeline(battle, 'instant'))).toBe(0)
     expect(totalDuration(buildTimeline(battle, 1))).toBeGreaterThan(0)
   })
+
+  it('manual waits on no clock at all: the player advances every step', () => {
+    expect(totalDuration(buildTimeline(battle, 'manual'))).toBe(0)
+  })
+
+  it('1x is slow enough to follow: every visible step lasts at least half a second', () => {
+    for (const step of buildTimeline(battle, 1)) {
+      // Followers (damage) ride on their head and are deliberately free.
+      if (step.parallelWith !== undefined) continue
+      if (DURATIONS[step.event.t] === 0) continue
+      expect(step.duration).toBeGreaterThanOrEqual(500)
+    }
+  })
 })
 
 describe('groupAt', () => {

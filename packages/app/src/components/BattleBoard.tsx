@@ -70,7 +70,7 @@ function Unit({
       >
         <UnitSprite defId={unit.defId} size={96} />
       </div>
-      <StatBadges atk={unit.atk + unit.tmpAtk} hp={unit.hp + unit.tmpHp} size={36} />
+      <StatBadges atk={unit.atk + unit.tmpAtk} hp={unit.hp + unit.tmpHp} size={47} />
       {unit.statuses.length > 0 && (
         <div className="banner" style={{ fontSize: 12, padding: '2px 8px' }}>
           {unit.statuses.join(' ')}

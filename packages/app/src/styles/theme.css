@@ -28,17 +28,17 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 46px;
-  padding: 0 16px 0 7px;
-  border-radius: 23px;
+  height: 60px;
+  padding: 0 21px 0 9px;
+  border-radius: 30px;
   background: #fff;
   border: 3px solid var(--ink);
   color: var(--ink);
   font-weight: 800;
-  font-size: 24px;
+  font-size: 31px;
 }
 .hud-pill .icon {
-  font-size: 26px;
+  font-size: 34px;
   line-height: 1;
 }
 
@@ -95,11 +95,11 @@
 }
 
 .stat-badge {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-content: center;
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 800;
   color: #fff;
   border: 3px solid var(--ink);
@@ -185,35 +185,35 @@
 /* A white plate for one line of text over the artwork (the battle narration). */
 .banner {
   display: inline-block;
-  padding: 6px 18px;
+  padding: 8px 23px;
   background: #fff;
   border: 3px solid var(--ink);
   border-radius: 10px;
   color: var(--ink);
   font-weight: 800;
-  font-size: 23px;
+  font-size: 30px;
 }
 
 /* A wooden signpost, used for the "Shop" and "Battle" lane labels. */
 .sign {
   position: relative;
   display: inline-block;
-  padding: 5px 16px 7px;
+  padding: 7px 21px 9px;
   background: var(--wood);
   border: 3px solid var(--ink);
   border-radius: 6px;
   color: var(--ink);
   font-weight: 800;
-  font-size: 24px;
+  font-size: 31px;
 }
 .sign::after {
   content: '';
   position: absolute;
   left: 50%;
   top: 100%;
-  width: 12px;
-  height: 26px;
-  margin-left: -6px;
+  width: 16px;
+  height: 34px;
+  margin-left: -8px;
   background: var(--wood-dark);
   border: 3px solid var(--ink);
   border-top: none;

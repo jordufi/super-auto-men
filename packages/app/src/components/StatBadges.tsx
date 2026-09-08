@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 export function StatBadges({
   atk,
   hp,
-  size = 34,
+  size = 44,
 }: {
   atk: number
   hp: number

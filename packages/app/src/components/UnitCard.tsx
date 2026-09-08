@@ -160,7 +160,7 @@ export function UnitCard(props: UnitCardProps): ReactNode {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'flex-end',
-          gap: 6,
+          gap: 4,
           padding: 6,
           opacity: ghost ? 0.35 : 1,
         }}
@@ -199,7 +199,7 @@ export function UnitCard(props: UnitCardProps): ReactNode {
           </div>
         )}
         <div className="unit-sprite-wrap">
-          <UnitSprite defId={defId} size={84} />
+          <UnitSprite defId={defId} size={80} />
         </div>
         {kind === 'unit' && (
           <>

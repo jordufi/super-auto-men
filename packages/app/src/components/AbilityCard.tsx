@@ -54,18 +54,18 @@ export function AbilityCard({
   return (
     <div
       className="ability-card"
-      style={{ width: big ? 470 : 320, padding: big ? '12px 20px 16px' : '10px 14px 12px' }}
+      style={{ width: big ? 610 : 416, padding: big ? '16px 26px 21px' : '13px 18px 16px' }}
     >
       {defId && (
         <div style={{ position: 'absolute', left: 10, top: 8 }}>
-          <UnitSprite defId={defId} size={big ? 60 : 46} />
+          <UnitSprite defId={defId} size={big ? 78 : 60} />
         </div>
       )}
       <div
         style={{
           color: '#e2571c',
           fontWeight: 800,
-          fontSize: big ? 34 : 27,
+          fontSize: big ? 44 : 35,
           letterSpacing: 0.5,
         }}
       >
@@ -77,9 +77,9 @@ export function AbilityCard({
         <span style={{ flex: 1, height: 2, background: 'var(--ink)', opacity: 0.35 }} />
       </div>
       {trigger && (
-        <div style={{ opacity: 0.6, fontSize: big ? 17 : 16 }}>{triggerLabel(trigger)}</div>
+        <div style={{ opacity: 0.6, fontSize: big ? 22 : 21 }}>{triggerLabel(trigger)}</div>
       )}
-      <div style={{ fontWeight: 700, fontSize: big ? 23 : 20 }}>{text ?? 'No ability.'}</div>
+      <div style={{ fontWeight: 700, fontSize: big ? 30 : 26 }}>{text ?? 'No ability.'}</div>
     </div>
   )
 }

@@ -173,3 +173,34 @@ test.describe('press and hold to read a card', () => {
     })
   })
 })
+
+/**
+ * The stage clips its overflow, so a tooltip centred over a card near the end of a row would have
+ * its text cut off -- exactly when it is being read. AbilityTooltip nudges it back inside.
+ */
+test('an ability tooltip never runs off the edge of the stage', async ({ page }) => {
+  // 4:3 clamps the stage to MIN_W: the least horizontal room a tooltip ever has.
+  await page.setViewportSize({ width: 1024, height: 768 })
+  await page.goto('/?seed=429')
+  // Fill team slots so the outermost cards of the five-wide row exist.
+  for (let i = 0; i < 3; i++) {
+    await page.getByTestId('shop-slot-0').click()
+    await page.getByTestId(`team-slot-${i}`).click()
+  }
+
+  const stage = (await page.getByTestId('stage').boundingBox())!
+  const cards = page.locator('[data-testid^="team-slot-"] [data-defid]')
+  const count = await cards.count()
+  expect(count).toBeGreaterThan(0)
+
+  for (let i = 0; i < count; i++) {
+    await cards.nth(i).hover()
+    await page.waitForTimeout(150)
+    const tip = await page.getByTestId('ability-tooltip').boundingBox()
+    if (!tip) continue
+    expect(tip.x, `card ${i} left edge`).toBeGreaterThanOrEqual(stage.x - 0.5)
+    expect(tip.x + tip.width, `card ${i} right edge`).toBeLessThanOrEqual(
+      stage.x + stage.width + 0.5,
+    )
+  }
+})

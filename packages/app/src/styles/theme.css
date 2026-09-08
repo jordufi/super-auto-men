@@ -28,17 +28,17 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 40px;
-  padding: 0 14px 0 6px;
-  border-radius: 20px;
+  height: 46px;
+  padding: 0 16px 0 7px;
+  border-radius: 23px;
   background: #fff;
   border: 3px solid var(--ink);
   color: var(--ink);
   font-weight: 800;
-  font-size: 20px;
+  font-size: 24px;
 }
 .hud-pill .icon {
-  font-size: 22px;
+  font-size: 26px;
   line-height: 1;
 }
 
@@ -99,7 +99,7 @@
   height: 34px;
   display: grid;
   place-content: center;
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 800;
   color: #fff;
   border: 3px solid var(--ink);
@@ -191,20 +191,20 @@
   border-radius: 10px;
   color: var(--ink);
   font-weight: 800;
-  font-size: 19px;
+  font-size: 23px;
 }
 
 /* A wooden signpost, used for the "Shop" and "Battle" lane labels. */
 .sign {
   position: relative;
   display: inline-block;
-  padding: 4px 14px 6px;
+  padding: 5px 16px 7px;
   background: var(--wood);
   border: 3px solid var(--ink);
   border-radius: 6px;
   color: var(--ink);
   font-weight: 800;
-  font-size: 20px;
+  font-size: 24px;
 }
 .sign::after {
   content: '';

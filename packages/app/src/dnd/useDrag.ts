@@ -6,7 +6,11 @@ import { useUiStore } from '../store/uiStore'
 import { STAGE_H, STAGE_W } from '../components/Stage'
 import { type DropZone, collectZones, hitTest, toStage } from './hitTest'
 
-export const DRAG_THRESHOLD = 6
+/**
+ * Touch slop, in logical px. A finger resting on the screen drifts several pixels, so this has to
+ * be well above zero or every press-and-hold is mistaken for a drag.
+ */
+export const DRAG_THRESHOLD = 12
 
 export type DragSource = { kind: 'shop' | 'team'; index: number }
 
@@ -37,7 +41,9 @@ export function useDrag({
       const stage = (e.currentTarget as HTMLElement).closest<HTMLElement>('.stage')
       if (!stage) return
       const rect = stage.getBoundingClientRect()
-      const scale = rect.width / STAGE_W || 1
+      // The stage width is per-device (Stage.tsx), so read the live value rather than assume 1280.
+      const logicalWidth = Number(stage.dataset['logicalWidth']) || STAGE_W
+      const scale = rect.width / logicalWidth || 1
       const origin = { x: rect.left, y: rect.top }
       const el = e.currentTarget as HTMLElement
       el.setPointerCapture(e.pointerId)
@@ -65,7 +71,7 @@ export function useDrag({
         setDrag({
           kind: source.kind,
           from: source.index,
-          x: Math.max(0, Math.min(STAGE_W, q.x)),
+          x: Math.max(0, Math.min(logicalWidth, q.x)),
           y: Math.max(0, Math.min(STAGE_H, q.y)),
           over: zone ? zone.index : null,
           overKind: zone ? zone.kind : null,

@@ -12,6 +12,17 @@ import { TeamBoard } from '../components/TeamBoard'
 import { ShopRow } from '../components/ShopRow'
 import { ActionBar } from '../components/ActionBar'
 import { EventLog } from '../components/EventLog'
+import { LANE, Scenery } from '../components/Scenery'
+import { useContentWidth } from '../components/Stage'
+
+/** A wooden signpost planted at the left end of a lane. */
+function Sign({ label }: { label: string }): ReactNode {
+  return (
+    <div style={{ position: 'absolute', left: 34, top: 46 }}>
+      <span className="sign">{label}</span>
+    </div>
+  )
+}
 
 export function ShopScreen(): ReactNode {
   const state = useRunStore((s) => s.state)
@@ -21,6 +32,7 @@ export function ShopScreen(): ReactNode {
   const select = useUiStore((s) => s.select)
   const drag = useUiStore((s) => s.drag)
   const setScreen = useUiStore((s) => s.setScreen)
+  const contentW = useContentWidth()
 
   const onTap = useCallback(
     (source: DragSource) => {
@@ -77,50 +89,53 @@ export function ShopScreen(): ReactNode {
 
   return (
     <>
+      <Scenery />
       <TopBar turn={state.turn} lives={state.lives} trophies={state.trophies} gold={state.gold} />
 
-      <div style={{ position: 'absolute', top: 100, left: 0, right: 0 }}>
-        <div style={{ textAlign: 'center', color: 'var(--muted)', marginBottom: 6, fontSize: 14 }}>
-          Your team &mdash; front on the right
+      <div style={{ position: 'absolute', top: LANE.team, left: 0, right: 0 }}>
+        <div style={{ position: 'relative', width: contentW, margin: '0 auto' }}>
+          <Sign label="Team" />
+          <TeamBoard
+            team={state.team}
+            selected={selected?.kind === 'team' ? selected.slot : null}
+            dropTarget={drag && drag.overKind === 'team' ? drag.over : null}
+            dragging={drag?.kind === 'team' ? drag.from : null}
+            onSlotPointerDown={teamPointerDown}
+          />
         </div>
-        <TeamBoard
-          team={state.team}
-          selected={selected?.kind === 'team' ? selected.slot : null}
-          dropTarget={drag && drag.overKind === 'team' ? drag.over : null}
-          dragging={drag?.kind === 'team' ? drag.from : null}
-          onSlotPointerDown={teamPointerDown}
-        />
       </div>
 
-      <div style={{ position: 'absolute', top: 360, left: 0, right: 0 }}>
-        <div style={{ textAlign: 'center', color: 'var(--muted)', marginBottom: 6, fontSize: 14 }}>
-          Shop
+      <div style={{ position: 'absolute', top: LANE.shop, left: 0, right: 0 }}>
+        <div style={{ position: 'relative', width: contentW, margin: '0 auto' }}>
+          <Sign label="Shop" />
+          <ShopRow
+            shop={state.shop}
+            gold={state.gold}
+            selected={selected?.kind === 'shop' ? selected.index : null}
+            dragging={drag?.kind === 'shop' ? drag.from : null}
+            onSlotPointerDown={shopPointerDown}
+          />
         </div>
-        <ShopRow
-          shop={state.shop}
-          gold={state.gold}
-          selected={selected?.kind === 'shop' ? selected.index : null}
-          dragging={drag?.kind === 'shop' ? drag.from : null}
-          onSlotPointerDown={shopPointerDown}
-        />
       </div>
 
-      <div style={{ position: 'absolute', bottom: 40, left: 0, right: 0 }}>
-        <ActionBar
-          canRoll={state.gold >= ROLL_COST}
-          canSell={selected?.kind === 'team'}
-          canFreeze={selected?.kind === 'shop'}
-          sellDropTarget={drag?.overKind === 'sell'}
-          onRoll={() => dispatch({ t: 'roll' })}
-          onSell={() => {
-            if (selected?.kind === 'team') dispatch({ t: 'sell', slot: selected.slot })
-            select(null)
-          }}
-          onFreeze={() => {
-            if (selected?.kind === 'shop') dispatch({ t: 'freeze', shopIndex: selected.index })
-          }}
-          onEndTurn={onEndTurn}
-        />
+      <div style={{ position: 'absolute', bottom: 22, left: 0, right: 0 }}>
+        <div style={{ width: contentW, margin: '0 auto' }}>
+          <ActionBar
+            canRoll={state.gold >= ROLL_COST}
+            canSell={selected?.kind === 'team'}
+            canFreeze={selected?.kind === 'shop'}
+            sellDropTarget={drag?.overKind === 'sell'}
+            onRoll={() => dispatch({ t: 'roll' })}
+            onSell={() => {
+              if (selected?.kind === 'team') dispatch({ t: 'sell', slot: selected.slot })
+              select(null)
+            }}
+            onFreeze={() => {
+              if (selected?.kind === 'shop') dispatch({ t: 'freeze', shopIndex: selected.index })
+            }}
+            onEndTurn={onEndTurn}
+          />
+        </div>
       </div>
 
       <EventLog />

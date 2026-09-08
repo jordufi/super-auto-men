@@ -15,7 +15,13 @@ export interface ShopRowProps {
 
 const costOf = (item: ShopSlot): number => (item.kind === 'unit' ? UNIT_COST : FOOD_COST)
 
-export function ShopRow({ shop, selected, dragging, gold, onSlotPointerDown }: ShopRowProps): ReactNode {
+export function ShopRow({
+  shop,
+  selected,
+  dragging,
+  gold,
+  onSlotPointerDown,
+}: ShopRowProps): ReactNode {
   return (
     <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
       {shop.map((item, i) => {
@@ -33,34 +39,29 @@ export function ShopRow({ shop, selected, dragging, gold, onSlotPointerDown }: S
               height: 160,
               display: 'grid',
               placeItems: 'center',
-              borderRadius: 14,
-              border: `2px solid ${item.frozen ? '#7fd7ff' : 'transparent'}`,
-              background: '#ffffff08',
               touchAction: 'none',
             }}
           >
+            <div
+              className="slab"
+              style={item.frozen ? { background: '#bfeaff', borderColor: '#6bb8dd' } : undefined}
+            />
             {/* A coin in the corner: the price is the one thing a shop slot must always show. */}
             <div
               data-testid={`price-${i}`}
               data-cost={cost}
               data-affordable={affordable ? 'true' : 'false'}
               title={`${cost} gold`}
+              className="stat-badge"
               style={{
                 position: 'absolute',
-                top: 4,
-                left: 4,
+                top: 0,
+                right: 4,
                 zIndex: 2,
-                width: 26,
-                height: 26,
                 borderRadius: '50%',
-                display: 'grid',
-                placeContent: 'center',
-                fontSize: 15,
-                fontWeight: 800,
-                color: '#101018',
-                background: affordable ? 'var(--gold)' : 'var(--line)',
-                border: '2px solid #00000055',
-                opacity: affordable ? 1 : 0.75,
+                color: 'var(--ink)',
+                background: affordable ? 'var(--gold)' : '#cfcabc',
+                opacity: affordable ? 1 : 0.8,
               }}
             >
               {cost}

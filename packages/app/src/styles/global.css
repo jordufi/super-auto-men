@@ -9,6 +9,17 @@
   --atk: #ff6b57;
   --hp: #6ee87a;
   --accent: #6c8cff;
+
+  /* Illustrated theme. Colours are shared with components/Scenery.tsx. */
+  --ink: #4b2e12;
+  --wood: #d79a4e;
+  --wood-dark: #a86f31;
+  --btn: #f79021;
+  --btn-dark: #c96a0d;
+  --badge-atk: #3c4250;
+  --badge-hp: #e8382f;
+  --stone: #b9b3a6;
+  --stone-dark: #948d80;
 }
 
 * {
@@ -23,6 +34,8 @@ body,
   background: var(--bg);
   color: var(--text);
   font-family:
+    'Baloo 2',
+    'Comic Sans MS',
     system-ui,
     -apple-system,
     'Segoe UI',
@@ -56,8 +69,6 @@ button:disabled {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 1280px;
-  height: 720px;
   transform-origin: center;
   background: linear-gradient(#232338, #1b1b2b);
 }
@@ -91,45 +102,103 @@ button:disabled {
 }
 
 /* Battle animations. transform/opacity only (ARCHITECTURE.md §6.1). */
-.battle-unit { will-change: transform; }
-.battle-unit[data-side='0'].attacking { animation: lungeRight 0.45s ease-out; }
-.battle-unit[data-side='1'].attacking { animation: lungeLeft 0.45s ease-out; }
-.battle-unit.hurt { animation: hurtShake 0.35s linear; }
-.battle-unit.ability { animation: pulse 0.5s ease-out; }
-.battle-unit.summoned { animation: popIn 0.4s ease-out; }
-.battle-unit.fainting { animation: fadeOut 0.35s ease-in forwards; }
-.popup { animation: floatUp 0.7s ease-out forwards; }
+.battle-unit {
+  will-change: transform;
+}
+.battle-unit[data-side='0'].attacking {
+  animation: lungeRight 0.45s ease-out;
+}
+.battle-unit[data-side='1'].attacking {
+  animation: lungeLeft 0.45s ease-out;
+}
+.battle-unit.hurt {
+  animation: hurtShake 0.35s linear;
+}
+.battle-unit.ability {
+  animation: pulse 0.5s ease-out;
+}
+.battle-unit.summoned {
+  animation: popIn 0.4s ease-out;
+}
+.battle-unit.fainting {
+  animation: fadeOut 0.35s ease-in forwards;
+}
+.popup {
+  animation: floatUp 0.7s ease-out forwards;
+}
 
 @keyframes lungeRight {
-  0% { transform: translateX(0); }
-  45% { transform: translateX(46px) scale(1.08); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(46px) scale(1.08);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 @keyframes lungeLeft {
-  0% { transform: translateX(0); }
-  45% { transform: translateX(-46px) scale(1.08); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(-46px) scale(1.08);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 @keyframes hurtShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-9px); }
-  75% { transform: translateX(9px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-9px);
+  }
+  75% {
+    transform: translateX(9px);
+  }
 }
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.14); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.14);
+  }
 }
 @keyframes popIn {
-  0% { transform: scale(0.4); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 @keyframes fadeOut {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(0.7); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
 }
 @keyframes floatUp {
-  0% { transform: translate(-50%, 0); opacity: 1; }
-  100% { transform: translate(-50%, -70px); opacity: 0; }
+  0% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -70px);
+    opacity: 0;
+  }
 }
 
 /*

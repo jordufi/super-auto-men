@@ -5,6 +5,7 @@ import { useRunStore } from './store/runStore'
 import { useUiStore } from './store/uiStore'
 import { parseParams, paramsEnabled } from './store/urlParams'
 import './styles/global.css'
+import './styles/theme.css'
 
 if (paramsEnabled(import.meta.env)) {
   const p = parseParams(window.location.search)

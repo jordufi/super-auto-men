@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Level } from '@sam/sim'
 import { CONTENT, describeAbility, describeFood } from '@sam/content'
+import { AbilityCard } from './AbilityCard'
 
 /** Ability text with {atk}/{hp}/{amount}/{count} filled in for the unit's current level. */
 export function abilityText(kind: 'unit' | 'food', defId: string, level: Level): string | null {
@@ -9,29 +10,29 @@ export function abilityText(kind: 'unit' | 'food', defId: string, level: Level):
   return ability ? describeAbility(ability, level) : null
 }
 
-export function AbilityTooltip({ text, trigger }: { text: string; trigger?: string }): ReactNode {
+export interface AbilityTooltipProps {
+  /** The card no longer prints a name label, so the tooltip is where the name lives. */
+  name: string
+  tier: number
+  text: string | null
+  trigger?: string
+}
+
+/** Positions an AbilityCard above the unit card being hovered or held. */
+export function AbilityTooltip(props: AbilityTooltipProps): ReactNode {
   return (
     <div
       data-testid="ability-tooltip"
       style={{
         position: 'absolute',
-        bottom: 'calc(100% + 8px)',
+        bottom: 'calc(100% + 10px)',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: 220,
-        padding: '8px 10px',
-        borderRadius: 10,
-        background: '#0d0d16f2',
-        border: '1px solid var(--line)',
-        fontSize: 14,
-        lineHeight: 1.3,
-        textAlign: 'center',
         pointerEvents: 'none',
         zIndex: 20,
       }}
     >
-      {trigger && <div style={{ color: 'var(--muted)', fontSize: 12 }}>{trigger}</div>}
-      {text}
+      <AbilityCard {...props} />
     </div>
   )
 }

@@ -31,16 +31,21 @@ export function TeamBoard({
           data-drop-target={dropTarget === slot ? 'true' : undefined}
           onPointerDown={(e) => onSlotPointerDown(slot, e)}
           style={{
+            position: 'relative',
             width: 140,
             height: 160,
             display: 'grid',
             placeItems: 'center',
-            borderRadius: 14,
-            border: `2px dashed ${dropTarget === slot ? 'var(--accent)' : 'var(--line)'}`,
-            background: dropTarget === slot ? '#6c8cff22' : '#ffffff08',
             touchAction: 'none',
           }}
         >
+          {/* The stone slab is the slot: an empty one is just the bare slab. */}
+          <div
+            className="slab"
+            style={
+              dropTarget === slot ? { background: '#ffe89a', borderColor: '#e0a92c' } : undefined
+            }
+          />
           {unit && (
             <UnitCard
               kind="unit"

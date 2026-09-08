@@ -3,8 +3,8 @@ import type { ReactNode } from 'react'
 import type { Popup as PopupData } from '../replay/fold'
 
 const COLORS: Record<PopupData['kind'], string> = {
-  damage: 'var(--atk)',
-  buff: 'var(--hp)',
+  damage: '#ff5f4a',
+  buff: '#5ee06a',
   status: '#7fd7ff',
 }
 
@@ -16,12 +16,13 @@ export function Popup({ popup }: { popup: PopupData }): ReactNode {
       style={{
         position: 'absolute',
         left: '50%',
-        top: -10,
+        top: -30,
         transform: 'translateX(-50%)',
         color: COLORS[popup.kind],
+        WebkitTextStroke: '3px var(--ink)',
+        paintOrder: 'stroke fill',
         fontWeight: 800,
-        fontSize: 30,
-        textShadow: '0 2px 0 #000',
+        fontSize: 32,
         pointerEvents: 'none',
         whiteSpace: 'nowrap',
       }}

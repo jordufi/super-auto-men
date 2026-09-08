@@ -19,7 +19,15 @@ export function UnitSprite({ defId, size }: { defId: string; size: number }): Re
         alt={defId}
         className="sprite"
         draggable={false}
-        style={{ width: size, height: size, objectFit: 'contain', pointerEvents: 'none' }}
+        style={{
+          width: size,
+          height: size,
+          objectFit: 'contain',
+          // Bottom, not centre: sprites have uneven transparent padding, and this is what makes
+          // them all stand on the slab instead of floating at different heights.
+          objectPosition: 'bottom',
+          pointerEvents: 'none',
+        }}
       />
     )
   }
@@ -30,11 +38,12 @@ export function UnitSprite({ defId, size }: { defId: string; size: number }): Re
         width: size,
         height: size,
         borderRadius: size * 0.2,
+        border: '3px solid var(--ink)',
         display: 'grid',
         placeContent: 'center',
         fontSize: size * 0.5,
         fontWeight: 800,
-        color: '#101018',
+        color: 'var(--ink)',
         background: `hsl(${hue(defId)} 65% 62%)`,
       }}
     >

@@ -8,13 +8,11 @@ import { useRunStore } from '../store/runStore'
 export function GoldCounter({ gold }: { gold: number }): ReactNode {
   const refused = useRunStore((s) => s.refused)
   return (
-    <div
-      key={refused}
-      data-testid="gold"
-      className={refused > 0 ? 'shake' : ''}
-      style={{ fontSize: 26, fontWeight: 800, color: 'var(--gold)' }}
-    >
-      {gold} <span style={{ fontSize: 16 }}>gold</span>
+    <div key={refused} className={`hud-pill ${refused > 0 ? 'shake' : ''}`} title="Gold">
+      <span className="icon" aria-hidden="true">
+        {'\u{1FA99}'}
+      </span>
+      <span data-testid="gold">{gold}</span>
     </div>
   )
 }

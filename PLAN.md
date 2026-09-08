@@ -584,7 +584,7 @@ packages/app/src/store/uiStore.ts
 packages/app/src/store/urlParams.ts   # parse ?seed=&screen=&speed=&offline=
 packages/app/src/screens/MenuScreen.tsx
 packages/app/src/screens/ShopScreen.tsx      # placeholder: shows turn/gold/lives and "End turn" button that does nothing yet
-packages/app/src/components/Stage.tsx        # fixed 1280x720 logical stage scaled to fit the viewport, landscape
+packages/app/src/components/Stage.tsx        # adaptive logical stage (fixed 720 height, per-device width) scaled to fit the viewport, landscape
 packages/app/src/assets/units/*.png          # move sprites/ here; rename to unit ids: e.g. ant.png, beaver.png, cricket.png, duck.png, fish.png (5 files → 5 units; others use the fallback)
 packages/app/src/assets/units/index.ts       # `export const SPRITES: Record<string, string>` built with import.meta.glob
 packages/app/src/styles/global.css
@@ -593,7 +593,13 @@ packages/app/src/styles/global.css
 **Steps**
 
 1. Vite app with React 18+, TypeScript, path aliases `@sam/sim` and `@sam/content` resolving to package `src` (Vite handles TS sources directly; no build step for sim/content).
-2. **Layout decision (locked):** landscape. `Stage` is a 1280×720 logical canvas (a plain `div`) scaled with `transform: scale(min(vw/1280, vh/720))` and centered. All screens render inside it with absolute logical coordinates. This makes every device look the same and makes Playwright screenshots stable. On portrait phones show a full-screen "Rotate your device" overlay (`data-testid="rotate-overlay"`).
+2. **Layout decision (locked):** landscape. `Stage` is a logical canvas (a plain `div`) with a **fixed 720 logical height** and a **width that adapts to the device**, centered and scaled with `transform: scale(...)`. All screens render inside it with absolute logical coordinates for Y and lay out against the *current* stage width for X — never a hard-coded 1280.
+
+   `stageLayout(vw, vh)` returns `{ width, scale }`: the width that would exactly fill the viewport (`vw / vh * 720`), clamped to `[MIN_W, MAX_W]` = `[1000, 1800]`, and `scale = min(vw / width, vh / 720)`. Inside the clamp both axes land on the viewport and the game fills the screen; outside it the smaller factor wins and the leftover shows as bars. 1280 (`STAGE_W`) is still the design width and is what a 16:9 device gets, so 16:9 layouts are unchanged.
+
+   *Why not a fixed canvas:* the game ships to Android and iOS, where aspect ratios run from 4:3 to about 21:9. A fixed 16:9 canvas pillarboxed ultra-wide phones badly. The cost is that screens must not assume a width — read it from `useStageWidth()` — and that Playwright screenshots are only comparable at a fixed viewport size (the config pins 1280×720, so they still are). The rule is locked by `packages/app/tests/stage.test.ts`.
+
+   On portrait phones show a full-screen "Rotate your device" overlay (`data-testid="rotate-overlay"`).
 3. `runStore` (zustand): holds `RunState | null`, exposes `startRun(seed)`, `dispatch(action)` (calls `applyAction` from sim), and later `endTurn()`. It must be the **only** place that calls into `@sam/sim` mutators. Selectors for `team`, `shop`, `gold`, etc.
 4. `uiStore`: `screen: 'menu' | 'shop' | 'battle' | 'runEnd'`, `speed: 1 | 2 | 'instant'`, `selected`, `drag` (Phase 9), `modal`.
 5. `urlParams.ts`: on boot, if `?seed=` is present start a run with that seed and jump to `?screen=` (default `shop`). `?speed=` sets `uiStore.speed`. `?offline=1` is a no-op until Phase 13. Only enabled when `import.meta.env.DEV || import.meta.env.VITE_ALLOW_URL_PARAMS === '1'`; E2E builds set that env var.
@@ -608,7 +614,7 @@ packages/app/src/styles/global.css
 - Vitest config for app: `environment: 'jsdom'`.
 
 **Human check**
-- `npm run dev`, open the URL: menu appears inside a letterboxed 16:9 stage; resizing the window keeps the aspect. Click "New run" → placeholder shop screen shows "Turn 1 · Gold 10 · Lives 5 · Trophies 0". Open `/?seed=42` → lands directly on the shop.
+- `npm run dev`, open the URL: menu appears inside the stage; resizing the window keeps the 720 logical height and widens the board until it hits the clamp. Click "New run" → placeholder shop screen shows "Turn 1 · Gold 10 · Lives 5 · Trophies 0". Open `/?seed=42` → lands directly on the shop.
 - Open on the phone in landscape via `--host`: fills the screen; portrait shows the rotate overlay.
 
 **Done when**

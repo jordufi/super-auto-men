@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { GoldCounter } from './GoldCounter'
 
+/** The run stats as white pills over the scenery: icon, then number. */
 export function TopBar({
   turn,
   lives,
@@ -12,36 +13,29 @@ export function TopBar({
   trophies: number
   gold: number
 }): ReactNode {
-  const cell = (label: string, value: ReactNode, testId: string): ReactNode => (
-    <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
-      <span style={{ color: 'var(--muted)', fontSize: 15 }}>{label}</span>
-      <span data-testid={testId} style={{ fontSize: 24, fontWeight: 800 }}>
-        {value}
+  const pill = (icon: string, value: ReactNode, testId: string, label: string): ReactNode => (
+    <div className="hud-pill" title={label}>
+      <span className="icon" aria-hidden="true">
+        {icon}
       </span>
+      <span data-testid={testId}>{value}</span>
     </div>
   )
   return (
     <div
       style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 64,
+        top: 14,
+        left: 16,
         display: 'flex',
         alignItems: 'center',
-        gap: 40,
-        padding: '0 32px',
-        background: 'var(--panel)',
-        borderBottom: '1px solid var(--line)',
+        gap: 10,
       }}
     >
-      {cell('Turn', turn, 'turn')}
-      {cell('Lives', lives, 'lives')}
-      {cell('Trophies', `${trophies}/10`, 'trophies')}
-      <div style={{ marginLeft: 'auto' }}>
-        <GoldCounter gold={gold} />
-      </div>
+      <GoldCounter gold={gold} />
+      {pill('❤️', lives, 'lives', 'Lives')}
+      {pill('⏳', turn, 'turn', 'Turn')}
+      {pill('\u{1F3C6}', `${trophies}/10`, 'trophies', 'Trophies')}
     </div>
   )
 }

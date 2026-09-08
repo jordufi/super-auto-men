@@ -94,3 +94,82 @@ test('every shop slot shows what it costs, and dims what you cannot afford', asy
     await expect(p).toHaveAttribute('data-affordable', 'false')
   }
 })
+
+/**
+ * Press-and-hold to read a card. These drive REAL touch input through CDP rather than dispatching
+ * pointer events by hand: only real input reproduces pointer-capture retargeting, which is what
+ * silently dismissed the tooltip mid-hold. Hand-dispatched events pass either way, so they are
+ * worse than useless here.
+ */
+test.describe('press and hold to read a card', () => {
+  test.use({ hasTouch: true, isMobile: true })
+
+  async function touchInput(page: Page) {
+    const cdp = await page.context().newCDPSession(page)
+    const send = (type: string, x?: number, y?: number): Promise<unknown> =>
+      cdp.send('Input.dispatchTouchEvent', {
+        type,
+        touchPoints: type === 'touchEnd' ? [] : [{ x: x!, y: y! }],
+      } as never)
+    return {
+      down: (x: number, y: number) => send('touchStart', x, y),
+      move: (x: number, y: number) => send('touchMove', x, y),
+      up: () => send('touchEnd'),
+    }
+  }
+
+  const tooltips = (page: Page): Promise<number> => page.getByTestId('ability-tooltip').count()
+
+  /** Tap the card to select it, then press and hold it with a finger that drifts. */
+  async function tapThenHold(page: Page, cardId: string): Promise<Record<string, number>> {
+    const t = await touchInput(page)
+    const b = (await page.getByTestId(cardId).boundingBox())!
+    const x = b.x + b.width / 2
+    const y = b.y + b.height / 2
+
+    await t.down(x, y)
+    await page.waitForTimeout(60)
+    await t.up()
+    await page.waitForTimeout(250)
+    const afterTap = await tooltips(page)
+
+    await t.down(x, y)
+    await page.waitForTimeout(150)
+    const holding = await tooltips(page)
+    await t.move(x + 5, y + 3) // a resting finger is never perfectly still
+    await page.waitForTimeout(250)
+    const drifted = await tooltips(page)
+    await t.up()
+    await page.waitForTimeout(200)
+    const released = await tooltips(page)
+
+    return { afterTap, holding, drifted, released }
+  }
+
+  test('a shop card shows its text while held, even once it is selected', async ({ page }) => {
+    await page.goto('/?seed=42')
+    expect(await tapThenHold(page, 'shop-card-0')).toEqual({
+      afterTap: 0, // a tap alone leaves nothing hanging over the board
+      holding: 1,
+      drifted: 1, // the drift must not be mistaken for the finger leaving
+      released: 0,
+    })
+  })
+
+  test('a team unit shows its text while held, even once it is selected', async ({ page }) => {
+    await page.goto('/?seed=42')
+    await page.getByTestId('shop-slot-0').click()
+    await page.getByTestId('team-slot-0').click()
+    await page.waitForTimeout(200)
+    const card = await page
+      .getByTestId('team-slot-0')
+      .locator('[data-defid]')
+      .getAttribute('data-testid')
+    expect(await tapThenHold(page, card!)).toEqual({
+      afterTap: 0,
+      holding: 1,
+      drifted: 1,
+      released: 0,
+    })
+  })
+})

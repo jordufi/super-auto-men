@@ -1,0 +1,225 @@
+/* Illustrated look: scenery overlay, HUD, chunky buttons, unit slabs and badges. */
+/* ---------------------------------------------------------------- scenery */
+
+.scenery {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Everything drawn over the scenery is dark ink on bright art, not light on dark. */
+.on-scenery {
+  color: var(--ink);
+}
+
+/* The heavy white outline that keeps small text legible over busy artwork. */
+.outlined {
+  color: #fff;
+  -webkit-text-stroke: 3px var(--ink);
+  paint-order: stroke fill;
+  font-weight: 800;
+}
+
+/* ------------------------------------------------------------------- HUD */
+
+.hud-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px 0 6px;
+  border-radius: 20px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 20px;
+}
+.hud-pill .icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------- buttons */
+
+/* Chunky bevelled buttons: a flat top face over a darker "side" via box-shadow. */
+.big-btn {
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--btn);
+  color: #fff;
+  -webkit-text-stroke: 2px var(--ink);
+  paint-order: stroke fill;
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: 0.5px;
+  padding: 12px 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  box-shadow: 0 6px 0 var(--btn-dark);
+  transition: transform 0.06s linear;
+}
+.big-btn:active:not(:disabled) {
+  transform: translateY(5px);
+  box-shadow: 0 1px 0 var(--btn-dark);
+}
+.big-btn:disabled {
+  opacity: 0.55;
+}
+.big-btn.dim {
+  background: #f6c68d;
+  box-shadow: 0 6px 0 #d59a58;
+}
+.big-btn.drop-target {
+  background: #7fd7ff;
+  box-shadow: 0 6px 0 #3ba7d6;
+}
+
+/* ------------------------------------------------------- units and slots */
+
+/* The grey slab a unit or an empty slot sits on. */
+.slab {
+  position: absolute;
+  left: 50%;
+  bottom: 44px;
+  transform: translateX(-50%);
+  width: 104px;
+  height: 30px;
+  border-radius: 15px;
+  background: var(--stone);
+  border: 3px solid var(--stone-dark);
+}
+
+.stat-badge {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-content: center;
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  border: 3px solid var(--ink);
+}
+.stat-badge.atk {
+  background: var(--badge-atk);
+  border-radius: 50%;
+}
+.stat-badge.hp {
+  background: var(--badge-hp);
+  border-radius: 50%;
+}
+
+/* Tier is read at a glance from the pip count, exactly like the reference game. */
+.tier-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px 5px;
+  min-width: 26px;
+  height: 24px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+}
+.tier-badge i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+/*
+ * Thrown objects: a grey rock for damage, a green ball for a buff. The travel is one transform
+ * animation between two measured points (Projectiles.tsx), so it stays on the compositor.
+ */
+.projectile {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--ink);
+  pointer-events: none;
+  z-index: 15;
+  animation: fly 300ms ease-in forwards;
+}
+.projectile.damage {
+  background: #7d766a;
+  /* Lumpy rather than a perfect circle, so it reads as a rock. */
+  border-radius: 60% 40% 55% 45%;
+}
+.projectile.buff {
+  background: #5ee06a;
+  border-radius: 50%;
+}
+
+@keyframes fly {
+  0% {
+    transform: translate(calc(var(--x0) - 50%), calc(var(--y0) - 50%)) scale(0.5);
+  }
+  70% {
+    transform: translate(calc(var(--x1) - 50%), calc(var(--y1) - 50%)) scale(1.1);
+  }
+  100% {
+    transform: translate(calc(var(--x1) - 50%), calc(var(--y1) - 50%)) scale(0.9);
+    opacity: 0;
+  }
+}
+
+/* The shared white card: hover tooltip and battle call-out. */
+.ability-card {
+  position: relative;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  color: var(--ink);
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* A white plate for one line of text over the artwork (the battle narration). */
+.banner {
+  display: inline-block;
+  padding: 6px 18px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 19px;
+}
+
+/* A wooden signpost, used for the "Shop" and "Battle" lane labels. */
+.sign {
+  position: relative;
+  display: inline-block;
+  padding: 4px 14px 6px;
+  background: var(--wood);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 20px;
+}
+.sign::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 12px;
+  height: 26px;
+  margin-left: -6px;
+  background: var(--wood-dark);
+  border: 3px solid var(--ink);
+  border-top: none;
+}
+
+/* The sprite reads as standing on the slab, not floating above it. */
+.unit-sprite-wrap {
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.18));
+}

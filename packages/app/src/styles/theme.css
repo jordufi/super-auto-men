@@ -85,7 +85,8 @@
   justify-content: center;
   gap: 12px;
   box-shadow: var(--e-bevel), var(--e-raised);
-  transition: transform var(--dur-fast) var(--ease-out);
+  /* Overshoots a little on release, like a spring-loaded key. */
+  transition: transform var(--dur-fast) var(--ease-pop);
 }
 .big-btn:active:not(:disabled) {
   transform: translateY(5px);

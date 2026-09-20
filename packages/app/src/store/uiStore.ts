@@ -19,10 +19,13 @@ export interface DragState {
 export interface UiStore {
   screen: Screen
   speed: Speed
+  /** 'reduced' is forced (dev/e2e param); 'auto' defers to the system setting. */
+  motion: 'auto' | 'reduced'
   selected: Selection
   drag: DragState | null
   setScreen: (screen: Screen) => void
   setSpeed: (speed: Speed) => void
+  setMotion: (motion: 'auto' | 'reduced') => void
   select: (selection: Selection) => void
   setDrag: (drag: DragState | null) => void
 }
@@ -30,10 +33,12 @@ export interface UiStore {
 export const useUiStore = create<UiStore>((set) => ({
   screen: 'menu',
   speed: 'manual',
+  motion: 'auto',
   selected: null,
   drag: null,
   setScreen: (screen) => set({ screen, selected: null }),
   setSpeed: (speed) => set({ speed }),
+  setMotion: (motion) => set({ motion }),
   select: (selected) => set({ selected }),
   setDrag: (drag) => set({ drag }),
 }))

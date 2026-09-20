@@ -16,6 +16,11 @@ describe('parseParams', () => {
     expect(parseParams('')).toEqual({})
   })
 
+  it('reads motion=reduced and nothing else for motion', () => {
+    expect(parseParams('?motion=reduced').motion).toBe('reduced')
+    expect(parseParams('?motion=full').motion).toBeUndefined()
+  })
+
   it('accepts speed=instant', () => {
     expect(parseParams('?speed=instant').speed).toBe('instant')
   })

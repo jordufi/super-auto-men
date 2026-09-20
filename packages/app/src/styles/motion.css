@@ -155,3 +155,42 @@
     opacity: 0;
   }
 }
+
+/* ------------------------------------------------------------ reduced motion */
+
+/* A number that only fades: the same beat as floatUp, without the travel. */
+@keyframes popupStatic {
+  0%,
+  70% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 0;
+  }
+}
+
+/*
+ * Reduced motion changes what CSS DRAWS, never what the replay counts: steps advance on the same
+ * setTimeout durations, so a battle takes exactly as long. Event
+ * motion is shortened to 1ms rather than removed, because `fainting` relies on `forwards` to end
+ * up invisible and `animation: none` would leave a fainted unit fully opaque for its whole step.
+ */
+[data-motion='reduced'] .scene-img {
+  transition: none;
+}
+[data-motion='reduced'] .unit-body,
+[data-motion='reduced'] .unit-shadow,
+[data-motion='reduced'] .shake,
+[data-motion='reduced'] .big-btn {
+  animation-duration: 1ms !important;
+  transition-duration: 0s !important;
+}
+[data-motion='reduced'] .popup {
+  animation: popupStatic 0.7s linear forwards;
+}
+/* A projectile is pure travel; with none, it would sit at its start point. */
+[data-motion='reduced'] .projectile {
+  display: none;
+}

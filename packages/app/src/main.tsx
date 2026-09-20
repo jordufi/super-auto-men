@@ -14,6 +14,7 @@ import './styles/theme.css'
 if (paramsEnabled(import.meta.env)) {
   const p = parseParams(window.location.search)
   if (p.speed !== undefined) useUiStore.getState().setSpeed(p.speed)
+  if (p.motion !== undefined) useUiStore.getState().setMotion(p.motion)
   if (p.seed !== undefined) {
     const run = useRunStore.getState()
     run.startRun(p.seed)

@@ -9,6 +9,8 @@ export interface UrlParams {
   screen?: Screen
   speed?: Speed
   offline?: boolean
+  /** Forces the reduced-motion path, which a browser's own setting cannot be relied on to do. */
+  motion?: 'reduced'
 }
 
 const SCREENS: Screen[] = ['menu', 'shop', 'battle', 'runEnd']
@@ -32,5 +34,6 @@ export function parseParams(search: string): UrlParams {
   else if (speed === 'instant' || speed === 'manual') out.speed = speed
 
   if (q.get('offline') === '1') out.offline = true
+  if (q.get('motion') === 'reduced') out.motion = 'reduced'
   return out
 }

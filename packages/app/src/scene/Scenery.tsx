@@ -18,9 +18,8 @@ export function Scenery(): ReactNode {
           draggable={false}
         />
       ))}
-      <div className="scene-glow" />
       <img className="scene-fg" src={FOREGROUND} alt="" draggable={false} />
-      <div className="scene-vignette" />
+      <div className="scene-light" />
     </div>
   )
 }

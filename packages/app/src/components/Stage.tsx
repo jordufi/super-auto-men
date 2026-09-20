@@ -4,6 +4,7 @@
 // ultra-wide fill their screen instead of sitting in pillarbox bars. Screens must therefore lay
 // out against the stage width they are given, never against a hard-coded 1280.
 import { type ReactNode, createContext, useContext, useEffect, useState } from 'react'
+import { useMotion } from './useMotion'
 
 export const STAGE_H = 720
 
@@ -65,6 +66,7 @@ export function Stage({ children }: { children: ReactNode }): ReactNode {
   }, [])
 
   const portrait = size.h > size.w
+  const motion = useMotion()
   const { width, scale } = stageLayout(size.w, size.h)
 
   return (
@@ -72,6 +74,7 @@ export function Stage({ children }: { children: ReactNode }): ReactNode {
       <div
         className="stage"
         data-testid="stage"
+        data-motion={motion}
         // useDrag reads this to convert client pixels into logical ones.
         data-logical-width={width}
         style={{ width, height: STAGE_H, transform: `translate(-50%, -50%) scale(${scale})` }}

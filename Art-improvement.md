@@ -15,8 +15,7 @@ feel physical.
 
 ## Status
 
-Done in the working tree (uncommitted): PRs 1-7 below. Still open: PR 8 (motion policy, reduced
-motion, parallax) and PR 9 (phone perf pass).
+PRs 1-8 are done. PR 9 (phone perf pass) is only partly done: see "Performance" below.
 
 Deviations from the plan as written:
 
@@ -35,6 +34,12 @@ Deviations from the plan as written:
 - **The battle board moved from `top: 380` to `BATTLE_TOP = 440`** so units stand on the arena
   floor of the painted scene. Locked in `tests/scene.test.ts`.
 - **Opponents carry no names**, so the battle header says YOU / RIVAL instead of inventing data.
+- **PR 8 shipped reduced motion, not parallax or drift.** `?motion=reduced` and the OS setting both
+  set `data-motion="reduced"` on the stage (`useMotion`), which shortens event animations to 1ms
+  and hides projectiles, never touching the replay clock (`e2e/scene.spec.ts` proves a battle
+  still finishes). The foreground sway was built, then removed: an infinite full-screen animation
+  is the one piece of ambient motion that could plausibly cost a low-end phone, and it was never
+  worth that. Foreground parallax on battle steps and safe-area insets are not done.
 - **Known, pre-existing:** at the 4:3 minimum stage width (1000) a 5-unit army is clipped at the
   screen edge. Not caused by this work.
 
@@ -414,3 +419,20 @@ would be pure churn.
 - `sonic.webp`, `calamardo.webp`, `dora.webp` and the Goku/Pikachu tiles in
   `packages/app/src/assets/units/` are recognizable third-party IP. Out of scope here, but it blocks
   shipping and should be tracked.
+
+## Performance
+
+What was measured, and what was not. Headless Chromium here uses software compositing and the
+machine was busy, so frame timings were too noisy to conclude anything: the *previous* build also
+stalled (5 of 8 runs had a >100ms frame; the new build 8 of 8, median 36 vs 55 fps), while a
+Chrome trace of either showed no task over 40ms. Composited layers, which do not depend on timing,
+were 14-21 for both builds against the budget of 24; the new build composites ~40% more pixels
+(6.9 vs 4.9 Mpx), i.e. the foreground and light layers.
+
+Changes made because of it, which cost nothing visually: glow and vignette are one layer, not two,
+and there is no infinite full-screen animation.
+
+**Still to do:** the gate in PLAN.md Phase 6 (avg >= 55 fps, min >= 45) has not been run on a real
+phone. Do that through `chrome://inspect` with the Layers and Performance panels, and record the
+result in `spike/README.md`. If it fails, the first things to cut are the foreground layer
+(200 KB, full-screen, alpha) and then the parchment `box-shadow` blurs on the HUD.

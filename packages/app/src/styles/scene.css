@@ -40,20 +40,20 @@
   opacity: 1;
   transition: opacity var(--dur-slow) var(--ease-out);
 }
-.scene-glow,
 .scene-fg,
-.scene-vignette {
+.scene-light {
   z-index: 2;
 }
 
-/* Warm sun bloom from the upper left, the direction every scene is lit from. */
-.scene-glow {
-  background: radial-gradient(ellipse 70% 60% at 18% 0%, rgb(255 236 170 / 0.32), transparent 70%);
-}
-
-/* In CSS rather than baked into the paintings, so it stays centred under any crop. */
-.scene-vignette {
-  background: radial-gradient(ellipse 85% 80% at 50% 48%, transparent 55%, rgb(30 24 8 / 0.3) 100%);
+/*
+ * Sun bloom from the upper left (the direction every scene is lit from) and a vignette, as ONE
+ * layer: each full-screen alpha layer is blended again every frame. In CSS rather than baked into
+ * the paintings so the vignette stays centred under any crop.
+ */
+.scene-light {
+  background:
+    radial-gradient(ellipse 70% 60% at 18% 0%, rgb(255 236 170 / 0.32), transparent 70%),
+    radial-gradient(ellipse 85% 80% at 50% 48%, transparent 55%, rgb(30 24 8 / 0.3) 100%);
 }
 
 /* The menu already has its own framing foliage and a title over the middle. */

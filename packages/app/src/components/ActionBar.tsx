@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { ROLL_COST } from '@sam/sim'
+import { Icon } from './ui/Icon'
 
 export interface ActionBarProps {
   canRoll: boolean
@@ -24,8 +25,11 @@ export function ActionBar(p: ActionBarProps): ReactNode {
       }}
     >
       <button className="big-btn" data-testid="roll" disabled={!p.canRoll} onClick={p.onRoll}>
-        Roll <span aria-hidden="true">{'\u{1F3B2}'}</span>
-        <span style={{ fontSize: 18, WebkitTextStroke: '1.5px var(--ink)' }}>{ROLL_COST}</span>
+        Roll <Icon name="dice" size={30} />
+        <span style={{ display: 'flex', alignItems: 'center', gap: 2, fontSize: 22 }}>
+          {ROLL_COST}
+          <Icon name="coin" size={22} />
+        </span>
       </button>
       <div style={{ display: 'flex', gap: 14 }}>
         {/* Doubles as the sell drop zone (PLAN.md Phase 9 step 2). */}
@@ -38,7 +42,7 @@ export function ActionBar(p: ActionBarProps): ReactNode {
           disabled={!p.canSell}
           onClick={p.onSell}
         >
-          Sell <span aria-hidden="true">{'\u{1F4B0}'}</span>
+          Sell <Icon name="bag" size={30} />
         </button>
         <button
           className="big-btn"
@@ -46,11 +50,11 @@ export function ActionBar(p: ActionBarProps): ReactNode {
           disabled={!p.canFreeze}
           onClick={p.onFreeze}
         >
-          Freeze <span aria-hidden="true">{'❄'}</span>
+          Freeze <Icon name="snowflake" size={30} />
         </button>
       </div>
       <button className="big-btn" data-testid="end-turn" onClick={p.onEndTurn}>
-        End turn <span aria-hidden="true">{'⚔'}</span>
+        End turn <Icon name="swords" size={30} />
       </button>
     </div>
   )

@@ -2,6 +2,7 @@
 import type { PointerEvent, ReactNode } from 'react'
 import type { Slots } from '@sam/sim'
 import { UnitCard } from './UnitCard'
+import { UnitGround } from './UnitGround'
 
 export interface TeamBoardProps {
   team: Slots
@@ -40,12 +41,7 @@ export function TeamBoard({
           }}
         >
           {/* The stone slab is the slot: an empty one is just the bare slab. */}
-          <div
-            className="slab"
-            style={
-              dropTarget === slot ? { background: '#ffe89a', borderColor: '#e0a92c' } : undefined
-            }
-          />
+          <UnitGround slab={dropTarget === slot ? 'target' : 'rest'} shadow={unit !== null} />
           {unit && (
             <UnitCard
               kind="unit"

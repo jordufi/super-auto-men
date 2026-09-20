@@ -3,6 +3,7 @@ import type { ShopSlot } from '@sam/sim'
 import { FOOD_COST, UNIT_COST } from '@sam/sim'
 import { CONTENT } from '@sam/content'
 import { UnitCard } from './UnitCard'
+import { UnitGround } from './UnitGround'
 
 export interface ShopRowProps {
   shop: readonly ShopSlot[]
@@ -42,27 +43,15 @@ export function ShopRow({
               touchAction: 'none',
             }}
           >
-            <div
-              className="slab"
-              style={item.frozen ? { background: '#bfeaff', borderColor: '#6bb8dd' } : undefined}
-            />
+            <UnitGround slab={item.frozen ? 'frozen' : 'rest'} />
             {/* A coin in the corner: the price is the one thing a shop slot must always show. */}
             <div
               data-testid={`price-${i}`}
               data-cost={cost}
               data-affordable={affordable ? 'true' : 'false'}
               title={`${cost} gold`}
-              className="stat-badge"
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: 4,
-                zIndex: 2,
-                borderRadius: '50%',
-                color: 'var(--ink)',
-                background: affordable ? 'var(--gold)' : '#cfcabc',
-                opacity: affordable ? 1 : 0.8,
-              }}
+              className="stat-badge coin"
+              style={{ position: 'absolute', top: 0, right: 4, zIndex: 'var(--z-coin)' }}
             >
               {cost}
             </div>

@@ -43,7 +43,7 @@ export function DragLayer({ team, shop }: { team: Slots; shop: readonly ShopSlot
         top: 0,
         transform: `translate(${drag.x - 65}px, ${drag.y - 75}px) scale(1.1)`,
         pointerEvents: 'none',
-        zIndex: 50,
+        zIndex: 'var(--z-drag)',
         filter: 'drop-shadow(0 8px 12px #0008)',
       }}
     >

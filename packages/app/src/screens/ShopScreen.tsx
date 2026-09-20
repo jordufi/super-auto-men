@@ -12,7 +12,7 @@ import { TeamBoard } from '../components/TeamBoard'
 import { ShopRow } from '../components/ShopRow'
 import { ActionBar } from '../components/ActionBar'
 import { EventLog } from '../components/EventLog'
-import { LANE, Scenery } from '../components/Scenery'
+import { LANE } from '../scene/lanes'
 import { useContentWidth } from '../components/Stage'
 
 /** A wooden signpost planted at the left end of a lane. */
@@ -89,7 +89,6 @@ export function ShopScreen(): ReactNode {
 
   return (
     <>
-      <Scenery />
       <TopBar turn={state.turn} lives={state.lives} trophies={state.trophies} gold={state.gold} />
 
       <div style={{ position: 'absolute', top: LANE.team, left: 0, right: 0 }}>

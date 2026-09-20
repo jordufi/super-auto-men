@@ -4,7 +4,11 @@ import { App } from './App'
 import { useRunStore } from './store/runStore'
 import { useUiStore } from './store/uiStore'
 import { parseParams, paramsEnabled } from './store/urlParams'
+import './styles/tokens.css'
 import './styles/global.css'
+import './styles/motion.css'
+import './styles/scene.css'
+import './styles/kit.css'
 import './styles/theme.css'
 
 if (paramsEnabled(import.meta.env)) {

@@ -1,7 +1,6 @@
 import { type ReactNode, useState } from 'react'
 import { hasSavedRun, useRunStore } from '../store/runStore'
 import { useUiStore } from '../store/uiStore'
-import { Scenery } from '../components/Scenery'
 
 export function MenuScreen(): ReactNode {
   // `Date` is allowed in app code; it is banned only in sim and content.
@@ -19,7 +18,6 @@ export function MenuScreen(): ReactNode {
 
   return (
     <>
-      <Scenery />
       <div
         style={{
           position: 'absolute',
@@ -34,7 +32,7 @@ export function MenuScreen(): ReactNode {
         <h1 className="outlined" style={{ fontSize: 84, margin: 0, letterSpacing: 2 }}>
           Super Auto Men
         </h1>
-        <p className="banner" style={{ justifySelf: 'center', margin: 0 }}>
+        <p className="ribbon parchment" style={{ justifySelf: 'center', margin: 0, fontSize: 28 }}>
           Win 10 battles before you lose 5 lives.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', alignItems: 'center' }}>
@@ -47,16 +45,7 @@ export function MenuScreen(): ReactNode {
             value={seed}
             inputMode="numeric"
             onChange={(e) => setSeed(e.target.value.replace(/\D/g, ''))}
-            style={{
-              font: 'inherit',
-              padding: 10,
-              width: 160,
-              borderRadius: 10,
-              border: '3px solid var(--ink)',
-              background: '#fff',
-              color: 'var(--ink)',
-              fontWeight: 700,
-            }}
+            className="parch-field"
           />
         </div>
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>

@@ -1,87 +1,120 @@
-/* Illustrated look: scenery overlay, HUD, chunky buttons, unit slabs and badges. */
-/* ---------------------------------------------------------------- scenery */
-
-.scenery {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
+/*
+ * The carved-wood look: HUD, buttons, badges, unit slabs, signs. Ribbons, medallions and the
+ * parchment cards are in kit.css; the backdrop is in scene.css.
+ *
+ * Wood faces are a texture under a light-to-dark gradient, which is what reads as a bevel: lit
+ * from the top, in shade at the bottom, matching the scenes' upper-left sun. Rivets are radial
+ * gradients rather than elements.
+ */
 
 /* Everything drawn over the scenery is dark ink on bright art, not light on dark. */
 .on-scenery {
   color: var(--ink);
 }
 
-/* The heavy white outline that keeps small text legible over busy artwork. */
+/* The heavy outline that keeps text legible over busy artwork. */
 .outlined {
   color: #fff;
-  -webkit-text-stroke: 3px var(--ink);
+  -webkit-text-stroke: var(--stroke-2) var(--ink);
   paint-order: stroke fill;
   font-weight: 800;
 }
 
 /* ------------------------------------------------------------------- HUD */
 
+/* A parchment slot in a wooden frame, with a gold medallion for its icon standing off the left end. */
 .hud-pill {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 60px;
-  padding: 0 21px 0 9px;
-  border-radius: 30px;
-  background: #fff;
-  border: 3px solid var(--ink);
+  height: 54px;
+  padding: 0 22px 0 52px;
+  border-radius: var(--r-pill);
+  background: url('../assets/scene/parchment.webp') center / cover;
+  border: var(--stroke-2) solid var(--ink);
+  box-shadow:
+    0 0 0 3px var(--wood),
+    0 0 0 6px var(--ink),
+    inset 0 3px 6px rgb(120 80 20 / 0.35),
+    0 8px 8px rgb(30 15 0 / 0.3);
   color: var(--ink);
   font-weight: 800;
   font-size: 31px;
 }
 .hud-pill .icon {
-  font-size: 34px;
-  line-height: 1;
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  width: 60px;
+  height: 60px;
+  margin-top: -30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: var(--stroke-2) solid var(--ink);
+  background: radial-gradient(circle at 35% 28%, var(--c-gold-200), var(--gold) 48%, var(--c-gold-600));
+  box-shadow:
+    inset 0 0 0 3px rgb(255 255 255 / 0.3),
+    inset 0 -4px 0 rgb(150 90 10 / 0.45),
+    0 3px 0 var(--wood-deep);
 }
 
 /* --------------------------------------------------------------- buttons */
 
-/* Chunky bevelled buttons: a flat top face over a darker "side" via box-shadow. */
+/* A wooden plank: tinted texture, bevel, rivets, and a "side" that collapses when pressed. */
 .big-btn {
-  border: 3px solid var(--ink);
-  border-radius: 14px;
-  background: var(--btn);
+  border: var(--stroke-2) solid var(--ink);
+  border-radius: var(--r-md);
+  background:
+    radial-gradient(circle at 10px 10px, var(--wood-deep) 0 2.5px, rgb(255 230 170 / 0.7) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at calc(100% - 10px) 10px, var(--wood-deep) 0 2.5px, rgb(255 230 170 / 0.7) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at 10px calc(100% - 10px), var(--wood-deep) 0 2.5px, rgb(255 230 170 / 0.7) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), var(--wood-deep) 0 2.5px, rgb(255 230 170 / 0.7) 2.5px 3.5px, transparent 4px),
+    linear-gradient(180deg, rgb(255 250 220 / 0.45), rgb(255 250 220 / 0) 45%, rgb(90 30 0 / 0.35)),
+    linear-gradient(rgb(247 128 20 / 0.62), rgb(247 128 20 / 0.62)),
+    url('../assets/scene/wood.webp') center / 640px auto;
   color: #fff;
-  -webkit-text-stroke: 2px var(--ink);
+  -webkit-text-stroke: var(--stroke-1) var(--ink);
   paint-order: stroke fill;
   font-weight: 800;
   font-size: 30px;
   letter-spacing: 0.5px;
-  padding: 12px 26px;
+  padding: 12px 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  box-shadow: 0 6px 0 var(--btn-dark);
-  transition: transform 0.06s linear;
+  gap: 12px;
+  box-shadow: var(--e-bevel), var(--e-raised);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 .big-btn:active:not(:disabled) {
   transform: translateY(5px);
-  box-shadow: 0 1px 0 var(--btn-dark);
+  box-shadow: var(--e-bevel), var(--e-pressed);
 }
 .big-btn:disabled {
   opacity: 0.55;
 }
+/* The button that is not the current choice, and secondary actions. */
 .big-btn.dim {
-  background: #f6c68d;
-  box-shadow: 0 6px 0 #d59a58;
+  background:
+    radial-gradient(circle at 10px 10px, var(--wood-deep) 0 2.5px, rgb(255 230 170 / 0.7) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at calc(100% - 10px) 10px, var(--wood-deep) 0 2.5px, rgb(255 230 170 / 0.7) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at 10px calc(100% - 10px), var(--wood-deep) 0 2.5px, rgb(255 230 170 / 0.7) 2.5px 3.5px, transparent 4px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), var(--wood-deep) 0 2.5px, rgb(255 230 170 / 0.7) 2.5px 3.5px, transparent 4px),
+    linear-gradient(180deg, rgb(255 250 220 / 0.45), rgb(255 250 220 / 0) 45%, rgb(90 30 0 / 0.3)),
+    linear-gradient(rgb(255 232 180 / 0.5), rgb(255 232 180 / 0.5)),
+    url('../assets/scene/wood.webp') center / 640px auto;
 }
 .big-btn.drop-target {
-  background: #7fd7ff;
-  box-shadow: 0 6px 0 #3ba7d6;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.45), rgb(255 255 255 / 0) 45%, rgb(0 40 90 / 0.3)),
+    linear-gradient(rgb(70 185 255 / 0.75), rgb(70 185 255 / 0.75)),
+    url('../assets/scene/wood.webp') center / 640px auto;
 }
 
 /* ------------------------------------------------------- units and slots */
 
-/* The grey slab a unit or an empty slot sits on. */
+/* The stone a unit or an empty slot sits on. */
 .slab {
   position: absolute;
   left: 50%;
@@ -90,8 +123,37 @@
   width: 104px;
   height: 30px;
   border-radius: 15px;
-  background: var(--stone);
-  border: 3px solid var(--stone-dark);
+  background: radial-gradient(ellipse at 50% 25%, #dcd6c8, var(--stone) 60%, var(--stone-dark));
+  border: var(--stroke-2) solid #7d766a;
+  box-shadow:
+    inset 0 3px 0 rgb(255 255 255 / 0.45),
+    inset 0 -4px 6px rgb(60 50 30 / 0.3),
+    0 3px 0 rgb(75 46 18 / 0.35);
+}
+.slab.target {
+  background: radial-gradient(ellipse at 50% 25%, #fff6c8, #ffe89a 60%, #e0a92c);
+  border-color: #b8841a;
+}
+.slab.frozen {
+  background: radial-gradient(ellipse at 50% 25%, #f0fbff, #bfeaff 60%, #6bb8dd);
+  border-color: #4f96b8;
+}
+
+/*
+ * A soft contact shadow under a standing unit. A radial gradient, not filter: blur() or a
+ * box-shadow: it is one cheap paint, where a blur is a separate render target per unit. Lit from
+ * the upper left, so it sits a little to the right (--sun-dir).
+ */
+.unit-shadow {
+  position: absolute;
+  left: calc(50% + var(--sun-dir) * 7px);
+  bottom: 42px;
+  width: 96px;
+  height: 28px;
+  margin-left: -48px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(30 20 50 / 0.5), rgb(30 20 50 / 0));
+  pointer-events: none;
 }
 
 .stat-badge {
@@ -102,15 +164,31 @@
   font-size: 22px;
   font-weight: 800;
   color: #fff;
-  border: 3px solid var(--ink);
+  -webkit-text-stroke: var(--stroke-2) var(--ink);
+  paint-order: stroke fill;
+  background: center / contain no-repeat;
 }
 .stat-badge.atk {
-  background: var(--badge-atk);
-  border-radius: 50%;
+  background-image: url('../assets/ui/atk.svg');
 }
 .stat-badge.hp {
-  background: var(--badge-hp);
+  background-image: url('../assets/ui/hp.svg');
+  padding-bottom: 3px;
+}
+/* The shop price: a gold coin, greyed out when it cannot be afforded. */
+.stat-badge.coin {
   border-radius: 50%;
+  border: var(--stroke-2) solid var(--ink);
+  color: var(--ink);
+  -webkit-text-stroke: 0;
+  background: radial-gradient(circle at 35% 28%, var(--c-gold-200), var(--gold) 48%, var(--c-gold-600));
+  box-shadow:
+    inset 0 0 0 3px rgb(255 255 255 / 0.3),
+    inset 0 -3px 0 rgb(150 90 10 / 0.5);
+}
+.stat-badge.coin[data-affordable='false'] {
+  background: radial-gradient(circle at 35% 28%, #f1ede2, #cfcabc 55%, #a29c8c);
+  opacity: 0.85;
 }
 
 /* Tier is read at a glance from the pip count, exactly like the reference game. */
@@ -119,18 +197,20 @@
   align-items: center;
   justify-content: center;
   gap: 3px;
-  padding: 4px 5px;
-  min-width: 26px;
-  height: 24px;
-  background: #fff;
-  border: 3px solid var(--ink);
-  border-radius: 6px;
+  padding: 4px 6px;
+  min-width: 28px;
+  height: 26px;
+  background: url('../assets/scene/parchment.webp') center / cover;
+  border: var(--stroke-2) solid var(--ink);
+  border-radius: var(--r-sm);
+  box-shadow: 0 0 0 2px var(--c-gold-400);
 }
 .tier-badge i {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--ink);
+  border: 1.5px solid var(--ink);
+  background: radial-gradient(circle at 35% 30%, var(--c-gold-200), var(--c-gold-600));
 }
 
 /*
@@ -143,18 +223,18 @@
   top: 0;
   width: 26px;
   height: 26px;
-  border: 3px solid var(--ink);
+  border: var(--stroke-2) solid var(--ink);
   pointer-events: none;
-  z-index: 15;
+  z-index: var(--z-projectile);
   animation: fly 300ms ease-in forwards;
 }
 .projectile.damage {
-  background: #7d766a;
+  background: radial-gradient(circle at 35% 30%, #b4ada0, #7d766a 60%, #5a5448);
   /* Lumpy rather than a perfect circle, so it reads as a rock. */
   border-radius: 60% 40% 55% 45%;
 }
 .projectile.buff {
-  background: #5ee06a;
+  background: radial-gradient(circle at 35% 30%, #c8ffcc, var(--c-green-400) 55%, #2fae3c);
   border-radius: 50%;
 }
 
@@ -171,38 +251,19 @@
   }
 }
 
-/* The shared white card: hover tooltip and battle call-out. */
-.ability-card {
-  position: relative;
-  background: #fff;
-  border: 3px solid var(--ink);
-  border-radius: 12px;
-  color: var(--ink);
-  line-height: 1.3;
-  text-align: center;
-}
-
-/* A white plate for one line of text over the artwork (the battle narration). */
-.banner {
-  display: inline-block;
-  padding: 8px 23px;
-  background: #fff;
-  border: 3px solid var(--ink);
-  border-radius: 10px;
-  color: var(--ink);
-  font-weight: 800;
-  font-size: 30px;
-}
-
-/* A wooden signpost, used for the "Shop" and "Battle" lane labels. */
+/* A wooden signpost, used for the "Team" and "Shop" lane labels. */
 .sign {
   position: relative;
   display: inline-block;
-  padding: 7px 21px 9px;
-  background: var(--wood);
-  border: 3px solid var(--ink);
-  border-radius: 6px;
+  padding: 6px 24px 10px;
+  background:
+    linear-gradient(180deg, rgb(255 250 220 / 0.4), rgb(255 250 220 / 0) 42%, rgb(70 30 5 / 0.32)),
+    url('../assets/scene/wood.webp') center / 640px auto;
+  border: var(--stroke-2) solid var(--ink);
+  border-radius: 8px;
+  box-shadow: var(--e-bevel), var(--e-rest);
   color: var(--ink);
+  text-shadow: 0 1px 0 rgb(255 235 180 / 0.6);
   font-weight: 800;
   font-size: 31px;
 }
@@ -214,12 +275,7 @@
   width: 16px;
   height: 34px;
   margin-left: -8px;
-  background: var(--wood-dark);
-  border: 3px solid var(--ink);
+  background: linear-gradient(90deg, var(--wood-dark), var(--wood-deep));
+  border: var(--stroke-2) solid var(--ink);
   border-top: none;
-}
-
-/* The sprite reads as standing on the slab, not floating above it. */
-.unit-sprite-wrap {
-  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.18));
 }

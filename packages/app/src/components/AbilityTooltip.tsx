@@ -57,7 +57,7 @@ export function AbilityTooltip(props: AbilityTooltipProps): ReactNode {
         left: '50%',
         transform: 'translateX(-50%)',
         pointerEvents: 'none',
-        zIndex: 20,
+        zIndex: 'var(--z-tooltip)',
       }}
     >
       <AbilityCard {...props} />

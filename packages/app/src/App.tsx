@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Stage } from './components/Stage'
+import { Scenery } from './scene/Scenery'
 import { MenuScreen } from './screens/MenuScreen'
 import { ShopScreen } from './screens/ShopScreen'
 import { BattleScreen } from './screens/BattleScreen'
@@ -10,6 +11,7 @@ export function App(): ReactNode {
   const screen = useUiStore((s) => s.screen)
   return (
     <Stage>
+      <Scenery />
       {screen === 'menu' && <MenuScreen />}
       {screen === 'shop' && <ShopScreen />}
       {screen === 'battle' && <BattleScreen />}

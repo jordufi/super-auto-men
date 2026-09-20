@@ -9,12 +9,15 @@ import { groupAt } from '../replay/timeline'
 import { useReplay } from '../replay/useReplay'
 import { BattleBoard } from '../components/BattleBoard'
 import { TopBar } from '../components/TopBar'
-import { Scenery } from '../components/Scenery'
+import { BATTLE_TOP } from '../scene/lanes'
+import { BattleHeader } from '../components/BattleHeader'
+import { Icon } from '../components/ui/Icon'
 import { AbilityCard } from '../components/AbilityCard'
 import { type UnitIndex, abilityCallout, narrate, unitIndex } from '../replay/narrate'
 import { projectilesFor } from '../replay/projectiles'
 
 const RESULT_TEXT = { a: 'Victory', b: 'Defeat', draw: 'Draw' } as const
+const RESULT_COLOR = { a: 'var(--gold)', b: 'var(--team-b)', draw: 'var(--c-slate-300)' } as const
 
 const SPEED_LABEL: Record<string, string> = {
   manual: 'Step',
@@ -63,7 +66,6 @@ export function BattleScreen(): ReactNode {
 
   return (
     <div data-testid="battle-screen" style={{ position: 'absolute', inset: 0 }}>
-      <Scenery />
       <TopBar
         turn={shownRun.turn}
         lives={shownRun.lives}
@@ -71,7 +73,9 @@ export function BattleScreen(): ReactNode {
         gold={shownRun.gold}
       />
 
-      <div style={{ position: 'absolute', top: 380, left: 0, right: 0 }}>
+      <BattleHeader lives={shownRun.lives} top={BATTLE_TOP - 104} />
+
+      <div style={{ position: 'absolute', top: BATTLE_TOP, left: 0, right: 0 }}>
         <BattleBoard
           board={board}
           attacking={head?.t === 'attack' ? [head.a, head.b] : []}
@@ -90,7 +94,7 @@ export function BattleScreen(): ReactNode {
           data-testid="ability-banner"
           style={{
             position: 'absolute',
-            top: 70,
+            top: 88,
             left: 0,
             right: 0,
             display: 'flex',
@@ -111,9 +115,11 @@ export function BattleScreen(): ReactNode {
       {!callout && message && (
         <div
           data-testid="battle-message"
-          style={{ position: 'absolute', top: 250, left: 0, right: 0, textAlign: 'center' }}
+          style={{ position: 'absolute', top: 214, left: 0, right: 0, textAlign: 'center' }}
         >
-          <span className="banner">{message}</span>
+          <span className="ribbon parchment" style={{ fontSize: 30 }}>
+            {message}
+          </span>
         </div>
       )}
 
@@ -147,7 +153,7 @@ export function BattleScreen(): ReactNode {
             onClick={next}
             disabled={done}
           >
-            Next <span aria-hidden="true">{'▶'}</span>
+            Next <Icon name="play" size={22} />
           </button>
         )}
         <button
@@ -170,24 +176,33 @@ export function BattleScreen(): ReactNode {
             placeContent: 'center',
             gap: 20,
             textAlign: 'center',
-            background: '#0d0d16bb',
+            background: 'rgb(20 12 5 / 0.5)',
           }}
         >
-          <div data-testid="battle-result" style={{ fontSize: 52, fontWeight: 800 }}>
-            {RESULT_TEXT[log.result]}
-          </div>
-          {/* The result overlay is the moment the outcome lands, so it shows the CURRENT run. */}
-          <div style={{ color: 'var(--muted)' }}>
-            Trophies {state.trophies} &middot; Lives {state.lives} &middot; battle seed {log.seed}
-          </div>
-          <button
-            className="big-btn"
-            data-testid="continue"
-            style={{ justifySelf: 'center' }}
-            onClick={cont}
+          <div
+            className="ability-card"
+            style={{ justifySelf: 'center', display: 'grid', gap: 12, padding: '22px 72px 30px' }}
           >
-            Continue
-          </button>
+            <div
+              data-testid="battle-result"
+              className="outlined"
+              style={{ fontSize: 72, lineHeight: 1.1, color: RESULT_COLOR[log.result] }}
+            >
+              {RESULT_TEXT[log.result]}
+            </div>
+            {/* The result overlay is the moment the outcome lands, so it shows the CURRENT run. */}
+            <div style={{ fontWeight: 700, fontSize: 24 }}>
+              Trophies {state.trophies} &middot; Lives {state.lives} &middot; battle seed {log.seed}
+            </div>
+            <button
+              className="big-btn"
+              data-testid="continue"
+              style={{ justifySelf: 'center', marginTop: 6 }}
+              onClick={cont}
+            >
+              Continue
+            </button>
+          </div>
         </div>
       )}
     </div>

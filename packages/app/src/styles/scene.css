@@ -1,0 +1,62 @@
+/*
+ * The painted backdrop. Every layer is decoration, so the shared class takes pointer events off
+ * the whole stack: nothing here may ever sit between a finger and the board.
+ *
+ * Scenes are painted 2.5:1 (the widest stage, 1800x720) and cover-cropped from the centre, so the
+ * middle 16:9 is the safe area and a 4:3 phone keeps only the middle ~55%.
+ */
+.scenery {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: var(--z-scenery);
+}
+.scenery > * {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.scene-img,
+.scene-fg {
+  object-fit: cover;
+  object-position: center;
+}
+
+/*
+ * A crossfade with no dip: the incoming scene fades in ON TOP of the outgoing one, which stays
+ * fully opaque underneath and is only switched off once the fade is done (the 0s transition with
+ * a delay), so the sky never shows through halfway.
+ */
+.scene-img {
+  opacity: 0;
+  transition: opacity 0s linear var(--dur-slow);
+}
+.scene-img[data-active='true'] {
+  z-index: 1;
+  opacity: 1;
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.scene-glow,
+.scene-fg,
+.scene-vignette {
+  z-index: 2;
+}
+
+/* Warm sun bloom from the upper left, the direction every scene is lit from. */
+.scene-glow {
+  background: radial-gradient(ellipse 70% 60% at 18% 0%, rgb(255 236 170 / 0.32), transparent 70%);
+}
+
+/* In CSS rather than baked into the paintings, so it stays centred under any crop. */
+.scene-vignette {
+  background: radial-gradient(ellipse 85% 80% at 50% 48%, transparent 55%, rgb(30 24 8 / 0.3) 100%);
+}
+
+/* The menu already has its own framing foliage and a title over the middle. */
+.scenery[data-scene='menu'] .scene-fg {
+  display: none;
+}

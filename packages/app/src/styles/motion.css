@@ -1,0 +1,157 @@
+/*
+ * Battle and UI motion. transform/opacity only (ARCHITECTURE.md §6.1).
+ *
+ * One transform job per element, because two animations on one element do not compose (the last
+ * one wins outright):
+ *   .battle-unit   layout only, NEVER transformed. Projectiles and hit-testing measure it.
+ *   .unit-body     the only element the state classes below animate.
+ *   .unit-shadow   animates itself off the same classes: it follows a lunge along the ground but
+ *                  must not shake or scale like the body does.
+ * The replay clock is setTimeout in replay/useReplay.ts, so none of this can change battle pacing.
+ */
+
+.shake {
+  animation: shakeX 0.3s linear;
+}
+.popup {
+  animation: floatUp 0.7s ease-out forwards;
+}
+
+.battle-unit[data-side='0'].attacking .unit-body {
+  animation: lungeRight 0.45s ease-out;
+}
+.battle-unit[data-side='1'].attacking .unit-body {
+  animation: lungeLeft 0.45s ease-out;
+}
+.battle-unit[data-side='0'].attacking .unit-shadow {
+  animation: shadowLungeRight 0.45s ease-out;
+}
+.battle-unit[data-side='1'].attacking .unit-shadow {
+  animation: shadowLungeLeft 0.45s ease-out;
+}
+.battle-unit.hurt .unit-body {
+  animation: hurtShake 0.35s linear;
+}
+.battle-unit.ability .unit-body {
+  animation: pulse 0.5s ease-out;
+}
+.battle-unit.ability .unit-shadow {
+  animation: shadowPulse 0.5s ease-out;
+}
+.battle-unit.summoned .unit-body,
+.battle-unit.summoned .unit-shadow {
+  animation: popIn 0.4s ease-out;
+}
+.battle-unit.fainting .unit-body,
+.battle-unit.fainting .unit-shadow {
+  animation: fadeOut 0.35s ease-in forwards;
+}
+
+@keyframes shakeX {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+@keyframes lungeRight {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(46px) scale(1.08);
+  }
+}
+@keyframes lungeLeft {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(-46px) scale(1.08);
+  }
+}
+@keyframes shadowLungeRight {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(46px) scaleX(1.08);
+  }
+}
+@keyframes shadowLungeLeft {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(-46px) scaleX(1.08);
+  }
+}
+@keyframes hurtShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-9px);
+  }
+  75% {
+    transform: translateX(9px);
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.14);
+  }
+}
+@keyframes shadowPulse {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(1.14);
+  }
+}
+@keyframes popIn {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes fadeOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+}
+@keyframes floatUp {
+  0% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -70px);
+    opacity: 0;
+  }
+}

@@ -1,8 +1,13 @@
 // Renders one folded board state. Everything it shows comes from the log; nothing is computed.
+//
+// The outer `.battle-unit` div is layout only and must NEVER be transformed: Projectiles measures
+// it with getBoundingClientRect, so a transform on it would move every projectile's endpoint.
+// The state classes it carries animate the inner `.unit-body` (see styles/motion.css).
 import { type ReactNode, useRef } from 'react'
 import type { UnitInstance } from '@sam/sim'
 import type { FoldedBoard, Popup as PopupData } from '../replay/fold'
 import { UnitSprite } from './UnitSprite'
+import { UnitGround } from './UnitGround'
 import { Popup } from './Popup'
 import { StatBadges } from './StatBadges'
 import { Projectiles } from './Projectiles'
@@ -48,34 +53,36 @@ function Unit({
       data-testid={`battle-unit-${unit.iid}`}
       data-side={side}
       className={classFor(unit.iid, props)}
-      style={{
-        position: 'relative',
-        width: 130,
-        height: 160,
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        gap: 6,
-      }}
+      style={{ position: 'relative', width: 130, height: 160 }}
     >
+      <UnitGround />
+      <div
+        className="unit-body"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          gap: 6,
+        }}
+      >
+        <div style={{ transform: side === 1 ? 'scaleX(-1)' : undefined }}>
+          <UnitSprite defId={unit.defId} size={96} />
+        </div>
+        <StatBadges atk={unit.atk + unit.tmpAtk} hp={unit.hp + unit.tmpHp} size={47} />
+        {unit.statuses.length > 0 && (
+          <div className="banner" style={{ fontSize: 12, padding: '2px 8px' }}>
+            {unit.statuses.join(' ')}
+          </div>
+        )}
+      </div>
+      {/* After the body, so the number paints over it; a fixed point, so it does not lunge. */}
       {popups.map((p, i) => (
         <Popup key={i} popup={p} />
       ))}
-      <div className="slab" />
-      <div
-        className="unit-sprite-wrap"
-        style={{ transform: side === 1 ? 'scaleX(-1)' : undefined }}
-      >
-        <UnitSprite defId={unit.defId} size={96} />
-      </div>
-      <StatBadges atk={unit.atk + unit.tmpAtk} hp={unit.hp + unit.tmpHp} size={47} />
-      {unit.statuses.length > 0 && (
-        <div className="banner" style={{ fontSize: 12, padding: '2px 8px' }}>
-          {unit.statuses.join(' ')}
-        </div>
-      )}
     </div>
   )
 }

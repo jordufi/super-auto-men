@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { useRunStore } from '../store/runStore'
 import { useUiStore } from '../store/uiStore'
-import { Scenery } from '../components/Scenery'
 
 export function RunEndScreen(): ReactNode {
   const state = useRunStore((s) => s.state)
@@ -11,7 +10,6 @@ export function RunEndScreen(): ReactNode {
 
   return (
     <>
-      <Scenery />
       <div
         style={{
           position: 'absolute',
@@ -26,7 +24,7 @@ export function RunEndScreen(): ReactNode {
         <div data-testid="run-end" className="outlined" style={{ fontSize: 72 }}>
           {won ? 'You win!' : 'Run over'}
         </div>
-        <div className="banner" style={{ justifySelf: 'center' }}>
+        <div className="ribbon parchment" style={{ justifySelf: 'center', fontSize: 28 }}>
           {state ? `${state.trophies} trophies · ${state.lives} lives · turn ${state.turn}` : null}
         </div>
         <button

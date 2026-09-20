@@ -1,0 +1,122 @@
+/*
+ * Design tokens. Three tiers: primitives (--c-*) are raw paint, semantic tokens (--ink, --wood, …)
+ * say what a colour is FOR, and components only ever read the semantic ones. Retheming (a dusk
+ * biome, say) means re-pointing semantic tokens at other primitives, never editing a component.
+ *
+ * Every length is plain px, never rem: the whole stage is one CSS scale() of a 720px-tall logical
+ * canvas, and useDrag / hitTest / Projectiles all convert client pixels back into those units.
+ *
+ * Motion tokens are for UI only. Battle pacing lives in replay/durations.ts and drives setTimeout;
+ * the two must never be unified or the replay clock changes.
+ */
+:root {
+  /* ------------------------------------------------------------ primitives */
+  --c-ink: #4b2e12;
+  --c-oak-100: #fbe6b8;
+  --c-oak-300: #efc27f;
+  --c-oak-500: #d79a4e;
+  --c-oak-700: #a86f31;
+  --c-oak-900: #6d4218;
+  --c-gold-200: #fff3b0;
+  --c-gold-400: #ffcf4a;
+  --c-gold-600: #d9961a;
+  --c-gold-800: #9a6208;
+  --c-parch-100: #fbf1d4;
+  --c-parch-300: #f0dcaa;
+  --c-parch-500: #d8b878;
+  --c-orange-400: #f79021;
+  --c-orange-700: #c96a0d;
+  --c-red-400: #e8382f;
+  --c-red-700: #a8231b;
+  --c-blue-400: #3f86d6;
+  --c-blue-700: #1f5aa3;
+  --c-slate-500: #3c4250;
+  --c-slate-300: #6b7385;
+  --c-stone-300: #b9b3a6;
+  --c-stone-500: #948d80;
+  --c-green-400: #5ee06a;
+  --c-sky-top: #5cc9f0;
+  --c-sky-bottom: #c3eefb;
+  --c-night-900: #171722;
+  --c-night-700: #2f2f45;
+
+  /* -------------------------------------------------------------- semantic */
+  --ink: var(--c-ink);
+  --wood: var(--c-oak-500);
+  --wood-dark: var(--c-oak-700);
+  --wood-deep: var(--c-oak-900);
+  --wood-light: var(--c-oak-300);
+  --gold: var(--c-gold-400);
+  --btn: var(--c-orange-400);
+  --btn-dark: var(--c-orange-700);
+  --badge-atk: var(--c-slate-500);
+  --badge-hp: var(--c-red-400);
+  --stone: var(--c-stone-300);
+  --stone-dark: var(--c-stone-500);
+  --parchment: var(--c-parch-100);
+  --team-a: var(--c-blue-400);
+  --team-a-dark: var(--c-blue-700);
+  --team-b: var(--c-red-400);
+  --team-b-dark: var(--c-red-700);
+  --sky-top: var(--c-sky-top);
+  --sky-bottom: var(--c-sky-bottom);
+  /* Behind the letterbox bars and the rotate overlay, and the base of the reset button. */
+  --bg: var(--c-night-900);
+  --panel-2: var(--c-night-700);
+  --line: #454563;
+  --text: #f2f2f7;
+  --muted: #a3a3bd;
+
+  /* The scene is lit from the upper left, so shadows fall to the right. +1 right, -1 left. */
+  --sun-dir: 1;
+
+  /* ---------------------------------------------------------------- scales */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-pill: 999px;
+
+  --stroke-1: 2px;
+  --stroke-2: 3px;
+  --stroke-3: 4px;
+
+  --t-xs: 14px;
+  --t-sm: 18px;
+  --t-md: 22px;
+  --t-lg: 30px;
+  --t-xl: 42px;
+  --t-2xl: 52px;
+  --t-3xl: 84px;
+  --font-ui: 'Baloo 2', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Paint only: these are box-shadow strings and must never be animated. */
+  --e-bevel: inset 0 2px 0 rgb(255 240 200 / 0.55), inset 0 -3px 0 rgb(80 40 8 / 0.35);
+  --e-rest: 0 4px 0 var(--wood-deep);
+  --e-raised: 0 6px 0 var(--wood-deep), 0 10px 12px rgb(40 20 5 / 0.35);
+  --e-pressed: 0 1px 0 var(--wood-deep);
+
+  /* Stacking. The scenery sits under everything so it can never block a tap. */
+  --z-scenery: 0;
+  --z-coin: 2;
+  --z-badge: 3;
+  --z-board: 10;
+  --z-projectile: 15;
+  --z-tooltip: 20;
+  --z-drag: 50;
+  --z-overlay: 80;
+  --z-rotate: 100;
+
+  --dur-fast: 120ms;
+  --dur-base: 240ms;
+  --dur-slow: 480ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+}

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useRunStore } from '../store/runStore'
+import { Icon } from './ui/Icon'
 
 /**
  * Flashes when the reducer refuses an action (usually "not enough gold"). The refusal counter is
@@ -9,8 +10,8 @@ export function GoldCounter({ gold }: { gold: number }): ReactNode {
   const refused = useRunStore((s) => s.refused)
   return (
     <div key={refused} className={`hud-pill ${refused > 0 ? 'shake' : ''}`} title="Gold">
-      <span className="icon" aria-hidden="true">
-        {'\u{1FA99}'}
+      <span className="icon">
+        <Icon name="coin" size={36} />
       </span>
       <span data-testid="gold">{gold}</span>
     </div>

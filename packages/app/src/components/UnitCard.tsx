@@ -7,6 +7,7 @@ import { UnitSprite } from './UnitSprite'
 import { AbilityTooltip, abilityText } from './AbilityTooltip'
 import { TierBadge } from './TierBadge'
 import { StatBadges } from './StatBadges'
+import { Icon } from './ui/Icon'
 
 export interface UnitCardProps {
   kind: 'unit' | 'food'
@@ -171,7 +172,7 @@ export function UnitCard(props: UnitCardProps): ReactNode {
             top: -14,
             left: '50%',
             transform: 'translateX(-50%)',
-            zIndex: 3,
+            zIndex: 'var(--z-badge)',
           }}
         >
           <TierBadge tier={def.tier} />
@@ -193,14 +194,12 @@ export function UnitCard(props: UnitCardProps): ReactNode {
         {frozen && (
           <div
             data-testid="frozen-badge"
-            style={{ position: 'absolute', top: 2, left: 2, fontSize: 20 }}
+            style={{ position: 'absolute', top: 2, left: 2 }}
           >
-            &#10052;
+            <Icon name="snowflake" size={26} />
           </div>
         )}
-        <div className="unit-sprite-wrap">
-          <UnitSprite defId={defId} size={80} />
-        </div>
+        <UnitSprite defId={defId} size={80} />
         {kind === 'unit' && (
           <>
             <StatBadges atk={atk ?? 0} hp={hp ?? 0} />

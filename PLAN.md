@@ -898,6 +898,26 @@ packages/app/src/screens/MenuScreen.tsx   # shows display name + trophies, "offl
 packages/app/tests/ghostSerialization.test.ts
 ```
 
+**Pending decision — when the ghost is fetched (evaluate before writing steps 3–4; not locked).**
+Steps 3–4 below read as "fetch the opponent during `endTurn`", which is the obvious reading of
+ARCHITECTURE.md §8.3. It has a cost the rest of this phase hides: `OpponentSource.pick` returns a
+`Team` *synchronously* and `runStore.endTurn` calls it inline, so fetching there means either
+turning the whole `endTurn` → `ShopScreen.onEndTurn` chain async, or stalling the End Turn tap for
+up to the 3 s timeout.
+
+The alternative is to **prefetch when the shop turn starts**: kick off `fetchGhost(turn, trophies)`
+as the turn opens, park the result in `sessionStore`, and let `SupabaseGhosts.pick` return what is
+already in memory (falling back to `LocalBots` when the fetch failed or has not landed yet). The
+player spends far longer shopping than the fetch takes, so `pick` stays synchronous, End Turn stays
+instant, and the offline path is untouched.
+
+Cost of prefetching: one more piece of client state, a fetch wasted whenever a run is abandoned
+mid-turn, and a ghost a few seconds staler than one fetched at the end — which does not matter,
+because ghosts are already snapshots of other players' *earlier* runs, not live opponents. The
+upload in step 3 stays where it is either way.
+
+If prefetch wins, steps 3–4 and the `ghosts.ts` / `sessionStore.ts` deliverables change shape.
+
 **Steps**
 
 1. **Schema:** ARCHITECTURE.md §8.2 tables + RLS policies: `profiles` select all, insert/update own; `ghosts` select all, insert own; `runs` insert own, select own. Add a Postgres function `pick_ghost(p_turn int, p_trophies int) returns setof ghosts` implementing the §8.3 query (`security definer`, excludes `auth.uid()`), so the client makes one RPC call.
@@ -1004,3 +1024,4 @@ npm run android:sync && npm run android:open
 2. ~~Whether `heal` should be a distinct effect kind or an alias of `buff` with `atk: 0`.~~ **Resolved (Phase 12 review):** alias. `heal` was never used by any unit or food and duplicated `buff` with `atk: 0`, so the effect kind was removed from the vocabulary. Healing content is written as a `buff`.
 3. Sprite `1.jpg` needs a transparent-background re-export; until then the ant uses it with a white box.
 4. Display names for the 30 units (owner will provide when renaming from SAP ids).
+5. Whether the opponent ghost is fetched at end-of-turn or prefetched when the shop turn starts (see the pending decision in Phase 13). Decides whether `OpponentSource.pick` stays synchronous.

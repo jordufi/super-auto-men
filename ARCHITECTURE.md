@@ -585,6 +585,13 @@ limit 1;
 
 `order by random()` is fine at small scale and will need replacing once the table is large — swap to a random-offset-into-the-index approach then, not now.
 
+**When to fetch (open; decide in Phase 13).** "At the end of each shop phase" above is the
+obvious reading, but it puts a network round trip on the End Turn tap and forces
+`OpponentSource.pick` to become asynchronous. Prefetching the opponent when the shop turn
+*starts* keeps `pick` synchronous and End Turn instant, for one extra piece of client state and
+a slightly staler ghost — which is harmless, since ghosts are snapshots rather than live
+opponents. The upload stays at end of turn either way. See PLAN.md Phase 13.
+
 **Cold start:** with no players there are no ghosts. Seed the table with 50–100 hand-built teams per turn bucket before launch. Plan for this; it is a launch-day problem that looks like a bug.
 
 ### 8.4 Remote content updates
@@ -779,3 +786,4 @@ Resolve these before they block work; none of them block M0.
 3. **Monetization** — cosmetics only, or something more? Affects whether server authority matters. Can wait until after M4.
 4. **Google Play testing requirements** (§9.3) — verify in week 1 because it is a calendar dependency, not an engineering one.
 5. **macOS CI provider** — decide by M4; do not discover the pricing at M5.
+6. **Ghost fetch timing** (§8.3) — at end of turn, or prefetched when the shop turn starts. Decides whether `OpponentSource.pick` stays synchronous. Needed by M3.
